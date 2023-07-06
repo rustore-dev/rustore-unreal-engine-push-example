@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "FURuStoreError.h"
-#include "FUFeatureAvailabilityResult.generated.h"
+#include "FURuStoreFeatureAvailabilityResult.generated.h"
 
 USTRUCT(BlueprintType)
-struct RUSTORECORE_API FUFeatureAvailabilityResult
+struct RUSTORECORE_API FURuStoreFeatureAvailabilityResult
 {
 	GENERATED_USTRUCT_BODY()
 
-	FUFeatureAvailabilityResult()
+	FURuStoreFeatureAvailabilityResult()
 	{
 		isAvailable = false;
 	}

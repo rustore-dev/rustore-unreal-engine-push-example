@@ -27,14 +27,21 @@ namespace RuStoreSDK
 
         virtual ~SimpleResponseListenerT() { }
 
+        virtual T ConvertResponse(T response)
+        {
+            return response;
+        }
+
     public:
         void OnSuccess(T response)
         {
+            auto _response = ConvertResponse(response);
+
             auto listener = GetWeakPtr();
-            CallbackHandler::AddCallback([this, listener, response]() {
+            CallbackHandler::AddCallback([this, listener, _response]() {
                 if (listener.IsValid())
                 {
-                    this->_onSuccess(this->GetId(), response);
+                    this->_onSuccess(this->GetId(), _response);
                     this->_onFinish(this);
                 }
             });

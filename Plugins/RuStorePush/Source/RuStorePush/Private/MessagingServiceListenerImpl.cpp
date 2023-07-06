@@ -2,6 +2,7 @@
 
 #include "MessagingServiceListenerImpl.h"
 #include "CallbackHandler.h"
+#include "URuStoreCore.h"
 
 using namespace RuStoreSDK;
 
@@ -23,16 +24,19 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
     response->priority = responseObject->GetInt("priority");
     response->ttl = responseObject->GetInt("ttl");
     response->collapseKey = responseObject->GetFString("collapseKey");
-    
+
     auto jData = responseObject->GetAJObject("data", "Ljava/util/Map;");
-    auto jDataArray = jData->CallAJObject("entrySet")->CallAJObject("toArray");
-    auto size = jDataArray->CallInt("size");
+    auto jDataSet = jData->CallSpecificAJObject("entrySet", "Ljava/util/Set;");
+    auto jDataArray = jDataSet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
+    auto size = jDataSet->CallInt("size");
+
     for (int i = 0; i < size; i++)
     {
-        auto p = jDataArray->CallAJObject("get", i);
+        auto p = jDataArray->GetAJObjectArrayElement(i);
         if (p != nullptr)
         {
             auto itemKey = p->CallFString("getKey");
+
             auto itemVal = p->CallFString("getValue");
             response->data.Add(itemKey, itemVal);
 
@@ -40,19 +44,23 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
         }
     }
     delete jDataArray;
+    delete jDataSet;
     delete jData;
 
-    auto jRawData = responseObject->GetAJObject("rawData", "Ljava/util/ByteArray;");
+    auto jRawData = responseObject->GetAJObject("rawData", "[B");
     if (jRawData != nullptr)
     {
-        size = jRawData->CallInt("size");
-        for (int i = 0; i < size; i++)
+        int byteArraySize = jRawData->CallInt("size");
+
+        for (int i = 0; i < byteArraySize; i++)
         {
-            auto item = jRawData->CallByte("getByte", i);
+            uint8 item = jRawData->CallByte("get", i);
             response->rawData.Add(item);
         }
         delete jRawData;
     }
+
+    URuStoreCore::LogWarn("rustore_debug", "Read notification");
 
     auto jNotification = responseObject->GetAJObject("notification", "Lru/rustore/sdk/pushclient/messaging/model/Notification;");
     if (jNotification != nullptr)
@@ -64,16 +72,17 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
         response->notification.icon = jNotification->GetFString("icon");
         response->notification.clickAction = jNotification->GetFString("clickAction");
 
-        auto jimageUrl = responseObject->GetAJObject("imageUrl", "Landroid/net/Uri;");
-        if (jimageUrl != nullptr)
+        auto jImageUrl = jNotification->GetAJObject("imageUrl", "Landroid/net/Uri;");
+        if (jImageUrl != nullptr)
         {
-            response->notification.imageUrl = jimageUrl->CallFString("toString");
+            response->notification.imageUrl = jImageUrl->CallFString("toString");
 
-            delete jimageUrl;
+            delete jImageUrl;
         }
 
         delete jNotification;
     }
+
     delete responseObject;
 
     auto listener = GetWeakPtr();

@@ -8,10 +8,50 @@
   <resourceCopies>
     <copyDir src="$S(PluginDir)/ThirdParty/Android" dst="$S(BuildDir)/libs" />
   </resourceCopies>
-
-  <addElement tag="application" name="ru.rustore.unitysdk.RuStoreUnityApplication" />
-
+  
   <androidManifestUpdates>
+    <addElements tag="application">
+      <service
+        xmlns:tools="http://schemas.android.com/tools"
+        android:name="ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService"
+        android:exported="true"
+        tools:ignore="ExportedService">
+        <intent-filter>
+          <action android:name="ru.rustore.sdk.pushclient.MESSAGING_EVENT" />
+        </intent-filter>
+      </service>
+    </addElements>
+    
+    <loopElements tag="activity">
+      <!-- Find UE GameActivity -->
+      <setStringFromAttribute result="activityName" tag="$" name="android:name" />
+      <setBoolIsEqual result="bUE4GameActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.GameActivity" />
+	  <!-- Add android:exported attribute for UE4 GameActivity -->
+	  <if condition="bUE4GameActivity">
+		<true>
+			<addAttribute tag="$" name="android:exported" value="true"/>
+		</true>
+	  </if>
+      <setBoolIsEqual result="bUE5GameActivity" arg1="$S(activityName)" arg2="com.epicgames.unreal.GameActivity" />
+      <setBoolOr result="bGameActivity" arg1="$B(bUE4GameActivity)" arg2="$B(bUE5GameActivity)" />
+      <if condition="bGameActivity">
+        <true>
+          <!-- Find first intent-filter -->
+          <setBool result="bFirstIntentFilter" value="true" />
+          <loopElements tag="intent-filter">
+            <if condition="bFirstIntentFilter">
+              <true>
+                <addElements tag="$">
+                  <category android:name="android.intent.category.DEFAULT" />
+                </addElements>
+                <setBool result="bFirstIntentFilter" value="false" />
+              </true>
+            </if>
+          </loopElements>
+        </true>
+      </if>
+    </loopElements>
+    
     <addElements tag="application">
       <service
         xmlns:tools="http://schemas.android.com/tools"

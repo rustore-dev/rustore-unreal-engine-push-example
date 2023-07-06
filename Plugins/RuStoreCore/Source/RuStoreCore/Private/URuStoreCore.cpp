@@ -3,10 +3,11 @@
 #include "URuStoreCore.h"
 #include "AndroidJavaClass.h"
 
+const FString URuStoreCore::PluginVersion = "0.1";
 URuStoreCore* URuStoreCore::_instance = nullptr;
 bool URuStoreCore::_bIsInstanceInitialized = false;
 
-bool URuStoreCore::getIsInitialized() { return bIsInitialized; }
+bool URuStoreCore::getbIsInitialized() { return bIsInitialized; }
 
 URuStoreCore* URuStoreCore::Instance()
 {
@@ -73,7 +74,7 @@ bool URuStoreCore::IsPlatformSupported(TFunction<void(long requestId, TSharedPtr
     error->name = "RuStore Error";
     error->description = "Unsupported platform";
     
-    onFailure(-1, error);
+    onFailure(0, error);
     
     return false;
 }

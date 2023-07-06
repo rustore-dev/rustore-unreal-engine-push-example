@@ -2,7 +2,6 @@
 
 package com.Plugins.RuStoreCore;
 
-import android.util.Log;
 import com.Plugins.RuStoreCore.IRuStoreListener;
 import ru.rustore.sdk.core.feature.model.FeatureAvailabilityResult;
 import ru.rustore.unitysdk.core.callbacks.FeatureAvailabilityListener;
@@ -23,7 +22,6 @@ public class FeatureAvailabilityListenerWrapper implements IRuStoreListener, Fea
     public void OnFailure(Throwable throwable) {
         synchronized (mutex) {
             if (cppPointer != 0) {
-                Log.e("rustore", "FeatureAvailabilityResult: Error message");
                 NativeOnFailure(cppPointer, throwable);
             }
         }
@@ -33,7 +31,6 @@ public class FeatureAvailabilityListenerWrapper implements IRuStoreListener, Fea
     public void OnSuccess(FeatureAvailabilityResult response) {
         synchronized (mutex) {
             if (cppPointer != 0) {
-                Log.e("rustore", "FeatureAvailabilityResult: Success message");
                 NativeOnSuccess(cppPointer, response);
             }
         }
@@ -41,7 +38,6 @@ public class FeatureAvailabilityListenerWrapper implements IRuStoreListener, Fea
 
     public void DisposeCppPointer() {
         synchronized (mutex) {
-            Log.e("rustore", "FeatureAvailabilityResult: Dispose pointer");
             cppPointer = 0;
         }
     }

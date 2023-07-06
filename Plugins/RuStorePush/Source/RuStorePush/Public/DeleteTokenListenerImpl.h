@@ -18,6 +18,6 @@ namespace RuStoreSDK
         {
         }
 
-        virtual ~DeleteTokenListenerImpl() {}
+        virtual ~DeleteTokenListenerImpl();
     };
 }

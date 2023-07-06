@@ -48,8 +48,10 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
 
     URuStoreCore::Instance()->Init();
 
-    AndroidJavaClass* clientJavaClass = new AndroidJavaClass("ru/rustore/unitysdk/pushclient/RuStoreUnityPushClient");
-    clientJavaClass->CallStaticVoid("init", new JavaApplication(), config.projectId);
+    _application = new JavaApplication();
+
+    auto clientJavaClass = MakeShared<AndroidJavaClass>("ru/rustore/unitysdk/pushclient/RuStoreUnityPushClient");
+    clientJavaClass->CallStaticVoid("init", _application, config.projectId);
     _clientWrapper = clientJavaClass->GetStaticAJObject("INSTANCE");
 
     AndroidJavaObject jMessagingServiceListenerNULL("ru/rustore/unitysdk/pushclient/RuStoreUnityMessagingServiceListener", 0, false);
@@ -72,10 +74,8 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
         : &jLogListenerNULL;
 
     _clientWrapper->CallVoid("init", config.allowNativeErrorHandling, jMessagingServiceListener, jLogListener);
-
-    bIsInitialized = true;
-
-    return bIsInitialized;
+	
+    return bIsInitialized = true;
 }
 
 void URuStorePushClient::Dispose()
@@ -85,6 +85,7 @@ void URuStorePushClient::Dispose()
         bIsInitialized = false;
         ListenerRemoveAll();
         delete _clientWrapper;
+        delete _application;
         _instance->RemoveFromRoot();
     }
 }
@@ -97,12 +98,12 @@ void URuStorePushClient::ConditionalBeginDestroy()
     if (_bIsInstanceInitialized) _bIsInstanceInitialized = false;
 }
 
-long URuStorePushClient::CheckPushAvailability(TFunction<void(long, TSharedPtr<FUFeatureAvailabilityResult, ESPMode::ThreadSafe>)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure)
+long URuStorePushClient::CheckPushAvailability(TFunction<void(long, TSharedPtr<FURuStoreFeatureAvailabilityResult, ESPMode::ThreadSafe>)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure)
 {
     if (!URuStoreCore::IsPlatformSupported(onFailure)) return 0;
     if (!bIsInitialized) return 0;
 
-    auto listener = ListenerBind(new FeatureAvailabilityListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item->GetWeakPtr().Pin()); }));
+    auto listener = ListenerBind(new FeatureAvailabilityListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item); }));
     _clientWrapper->CallVoid("checkPushAvailability", listener->GetJWrapper());
 
     return listener->GetId();
@@ -113,7 +114,7 @@ long URuStorePushClient::GetToken(TFunction<void(long, FString)> onSuccess, TFun
     if (!URuStoreCore::IsPlatformSupported(onFailure)) return 0;
     if (!bIsInitialized) return 0;
 
-    auto listener = ListenerBind(new GetTokenListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item->GetWeakPtr().Pin()); }));
+    auto listener = ListenerBind(new GetTokenListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item); }));
     _clientWrapper->CallVoid("getToken", listener->GetJWrapper());
 
     return listener->GetId();
@@ -124,7 +125,7 @@ long URuStorePushClient::DeleteToken(TFunction<void(long)> onSuccess, TFunction<
     if (!URuStoreCore::IsPlatformSupported(onFailure)) return 0;
     if (!bIsInitialized) return 0;
 
-    auto listener = ListenerBind(new DeleteTokenListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item->GetWeakPtr().Pin()); }));
+    auto listener = ListenerBind(new DeleteTokenListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item); }));
     _clientWrapper->CallVoid("deleteToken", listener->GetJWrapper());
 
     return listener->GetId();
@@ -133,7 +134,7 @@ long URuStorePushClient::DeleteToken(TFunction<void(long)> onSuccess, TFunction<
 void URuStorePushClient::CheckPushAvailability(int64& requestId)
 {
     requestId = CheckPushAvailability(
-        [this](long requestId, TSharedPtr<FUFeatureAvailabilityResult, ESPMode::ThreadSafe> response) {
+        [this](long requestId, TSharedPtr<FURuStoreFeatureAvailabilityResult, ESPMode::ThreadSafe> response) {
             OnCheckPushAvailabilityResponse.Broadcast(requestId, *response);
         },
         [this](long requestId, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {

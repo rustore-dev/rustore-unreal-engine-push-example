@@ -59,9 +59,19 @@ TSharedPtr<RuStoreListener, ESPMode::ThreadSafe> RuStoreListenerContainer::Liste
 	return sharedPtr;
 }
 
+void RuStoreListenerContainer::ListenerUnbind(long id)
+{
+	listeners.RemoveAll([&](const TSharedPtr<RuStoreListener, ESPMode::ThreadSafe>& item) { return item->GetId() == id; });
+}
+
+void RuStoreListenerContainer::ListenerUnbind(RuStoreListener* item)
+{
+	ListenerUnbind(item->GetId());
+}
+
 void RuStoreListenerContainer::ListenerUnbind(TSharedPtr<RuStoreListener, ESPMode::ThreadSafe> item)
 {
-	listeners.RemoveAll([&](const TSharedPtr<RuStoreListener, ESPMode::ThreadSafe>& item) { return item->GetId() == item->GetId(); });
+	ListenerUnbind(item->GetId());
 }
 
 void RuStoreListenerContainer::ListenerRemoveAll()

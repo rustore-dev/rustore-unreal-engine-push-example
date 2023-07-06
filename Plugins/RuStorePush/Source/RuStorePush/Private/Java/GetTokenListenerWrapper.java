@@ -5,8 +5,6 @@ package com.Plugins.RuStorePush;
 import com.Plugins.RuStoreCore.IRuStoreListener;
 import ru.rustore.unitysdk.pushclient.callbacks.GetTokenListener;
 
-import android.util.Log;
-
 public class GetTokenListenerWrapper implements IRuStoreListener, GetTokenListener
 {
     private Object mutex = new Object();
@@ -24,7 +22,6 @@ public class GetTokenListenerWrapper implements IRuStoreListener, GetTokenListen
     public void OnFailure(Throwable throwable) {
         synchronized (mutex) {
             if (cppPointer != 0) {
-                Log.e("rustore", "GetToken: Error message");
                 NativeOnFailure(cppPointer, throwable);
             }
         }
@@ -34,7 +31,6 @@ public class GetTokenListenerWrapper implements IRuStoreListener, GetTokenListen
     public void OnSuccess(String response) {
         synchronized (mutex) {
             if (cppPointer != 0) {
-                Log.e("rustore", "GetToken: Success message. Response: " + response);
                 NativeOnSuccess(cppPointer, response);
             }
         }
@@ -44,7 +40,6 @@ public class GetTokenListenerWrapper implements IRuStoreListener, GetTokenListen
     protected void finalize() {
         synchronized (mutex) {
             if (cppPointer != 0) {
-                Log.e("rustore", "GetToken: Finalize");
                 NativeOnFinalize(cppPointer);
             }
         }
@@ -52,7 +47,6 @@ public class GetTokenListenerWrapper implements IRuStoreListener, GetTokenListen
 
     public void DisposeCppPointer() {
         synchronized (mutex) {
-            Log.e("rustore", "FeatureAvailabilityResult: Dispose pointer");
             cppPointer = 0;
         }
     }

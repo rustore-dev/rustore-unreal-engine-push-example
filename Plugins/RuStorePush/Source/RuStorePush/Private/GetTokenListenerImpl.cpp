@@ -4,6 +4,10 @@
 
 using namespace RuStoreSDK;
 
+GetTokenListenerImpl::~GetTokenListenerImpl()
+{
+}
+
 #if PLATFORM_ANDROID
 extern "C"
 {

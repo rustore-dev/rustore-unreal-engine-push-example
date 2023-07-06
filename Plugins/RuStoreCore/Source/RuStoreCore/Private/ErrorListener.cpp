@@ -4,9 +4,18 @@
 
 using namespace RuStoreSDK;
 
+ErrorListener::~ErrorListener()
+{
+}
+
+FURuStoreError* ErrorListener::ConvertError(AndroidJavaObject* errorObject)
+{
+    return ErrorConverter::Convert(errorObject);
+}
+
 void ErrorListener::OnFailure(AndroidJavaObject* errorObject)
 {
-    auto error = TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>(ErrorConverter::Convert(errorObject));
+    auto error = TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>(ConvertError(errorObject));
     delete errorObject;
 
     auto listener = GetWeakPtr();

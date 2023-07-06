@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <androidManifestUpdates>
+    <addElements tag="application">
+      <meta-data
+        android:name="ru.rustore.sdk.pushclient.default_notification_color"
+        android:value="#FF055FF3" />
+    </addElements>
+  </androidManifestUpdates>
+
+</root>

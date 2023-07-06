@@ -4,6 +4,10 @@
 
 using namespace RuStoreSDK;
 
+DeleteTokenListenerImpl::~DeleteTokenListenerImpl()
+{
+}
+
 #if PLATFORM_ANDROID
 extern "C"
 {

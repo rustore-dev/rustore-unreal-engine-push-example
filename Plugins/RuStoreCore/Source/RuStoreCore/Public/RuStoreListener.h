@@ -36,6 +36,8 @@ namespace RuStoreSDK
 
 	public:
 		TSharedPtr<RuStoreListener, ESPMode::ThreadSafe> ListenerBind(RuStoreListener* item);
+		void ListenerUnbind(long id);
+		void ListenerUnbind(RuStoreListener* item);
 		void ListenerUnbind(TSharedPtr<RuStoreListener, ESPMode::ThreadSafe> item);
 		void ListenerRemoveAll();
 	};
