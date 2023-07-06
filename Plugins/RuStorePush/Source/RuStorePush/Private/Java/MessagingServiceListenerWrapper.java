@@ -2,7 +2,6 @@
 
 package com.Plugins.RuStorePush;
 
-import android.util.Log;
 import com.Plugins.RuStoreCore.IRuStoreListener;
 import java.util.List;
 import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException;
@@ -61,7 +60,6 @@ public class MessagingServiceListenerWrapper implements IRuStoreListener, RuStor
 
     public void DisposeCppPointer() {
         synchronized (mutex) {
-            Log.e("rustore", "MessagingServiceListenerWrapper: Dispose pointer");
             cppPointer = 0;
         }
     }

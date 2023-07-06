@@ -2,7 +2,6 @@
 
 package com.Plugins.RuStorePush;
 
-import android.util.Log;
 import com.Plugins.RuStoreCore.IRuStoreListener;
 import ru.rustore.unitysdk.pushclient.callbacks.UnityLogListener;
 
@@ -58,7 +57,6 @@ public class LogListenerWrapper implements IRuStoreListener, UnityLogListener
 
     public void DisposeCppPointer() {
         synchronized (mutex) {
-            Log.e("rustore", "LogListenerWrapper: Dispose pointer");
             cppPointer = 0;
         }
     }

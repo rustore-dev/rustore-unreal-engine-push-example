@@ -8,12 +8,12 @@
 #include "AndroidJavaClass.h"
 #include "FURuStorePushClientConfig.h"
 #include "FURuStoreError.h"
-#include "FUFeatureAvailabilityResult.h"
+#include "FURuStoreFeatureAvailabilityResult.h"
 #include "RuStoreListener.h"
 #include "URuStorePushClient.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCheckPushAvailabilityErrorDelegate, int64, requestId, FURuStoreError, error);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCheckPushAvailabilityResponseDelegate, int64, requestId, FUFeatureAvailabilityResult, response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCheckPushAvailabilityResponseDelegate, int64, requestId, FURuStoreFeatureAvailabilityResult, response);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetTokenErrorDelegate, int64, requestId, FURuStoreError, error);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetTokenResponseDelegate, int64, requestId, FString, response);
@@ -31,8 +31,9 @@ private:
     static bool _bIsInstanceInitialized;
 
     bool bIsInitialized = false;
-    bool _bAllowNativeErrorHandling;
-    AndroidJavaObject* _clientWrapper;
+    bool _bAllowNativeErrorHandling = false;
+    AndroidJavaObject* _clientWrapper = nullptr;
+    JavaApplication* _application = nullptr;
 
 public:
     static const FString PluginVersion;
@@ -43,6 +44,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
     static URuStorePushClient* Instance();
 
+	UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
     void SetAllowNativeErrorHandling(bool value);
 
     UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
@@ -53,7 +55,7 @@ public:
 
     void ConditionalBeginDestroy();
 
-    long CheckPushAvailability(TFunction<void(long, TSharedPtr<FUFeatureAvailabilityResult, ESPMode::ThreadSafe>)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
+    long CheckPushAvailability(TFunction<void(long, TSharedPtr<FURuStoreFeatureAvailabilityResult, ESPMode::ThreadSafe>)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
     long GetToken(TFunction<void(long, FString)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
     long DeleteToken(TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
 

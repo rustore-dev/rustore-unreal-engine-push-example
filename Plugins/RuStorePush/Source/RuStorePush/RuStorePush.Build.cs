@@ -41,13 +41,7 @@ public class RuStorePush : ModuleRules
 
 		if (Target.Platform == UnrealTargetPlatform.Android)
 		{
-			PrivateDependencyModuleNames.AddRange(
-				new string[]
-				{
-					"Launch",
-				}
-			);
-
+			PrivateDependencyModuleNames.AddRange(new string[] { "Launch" });
 			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(ModuleDirectory, "RuStorePush_UPL_Android.xml"));
 		}
 	}

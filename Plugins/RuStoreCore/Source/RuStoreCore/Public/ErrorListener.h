@@ -25,7 +25,9 @@ namespace RuStoreSDK
             _onFailure = onFailure;
             _onFinish = onFinish;
         }
-        virtual ~ErrorListener() { };
+        virtual ~ErrorListener();
+
+        virtual FURuStoreError* ConvertError(AndroidJavaObject* errorObject);
 
     public:
         void OnFailure(AndroidJavaObject* errorObject);

@@ -18,6 +18,6 @@ namespace RuStoreSDK
         {
         }
 
-        virtual ~GetTokenListenerImpl() {}
+        virtual ~GetTokenListenerImpl();
     };
 }
