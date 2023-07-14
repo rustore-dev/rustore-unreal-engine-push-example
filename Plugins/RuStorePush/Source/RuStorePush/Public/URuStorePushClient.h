@@ -39,7 +39,7 @@ public:
     static const FString PluginVersion;
 
     UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
-    bool getIsInitialized();
+    bool GetIsInitialized();
 
     UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
     static URuStorePushClient* Instance();

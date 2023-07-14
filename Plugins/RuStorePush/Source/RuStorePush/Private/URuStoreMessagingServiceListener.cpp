@@ -7,7 +7,7 @@
 URuStoreMessagingServiceListener* URuStoreMessagingServiceListener::_instance = nullptr;
 bool URuStoreMessagingServiceListener::_bIsInstanceInitialized = false;
 
-bool URuStoreMessagingServiceListener::getIsInitialized()
+bool URuStoreMessagingServiceListener::GetIsInitialized()
 {
     return bIsInitialized;
 }
