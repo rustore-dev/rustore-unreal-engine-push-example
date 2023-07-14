@@ -7,6 +7,7 @@
 #include "UObject/Interface.h"
 
 #include "AndroidJavaObject.h"
+#include "FURuStoreError.h"
 #include "RuStoreListener.h"
 #include "URuStoreLogListenerInterface.h"
 #include "URuStoreLogListener.generated.h"
@@ -47,7 +48,7 @@ public:
     }
 
     UFUNCTION(BlueprintCallable, Category = "RuStore Log Listener")
-    bool getIsInitialized();
+    bool GetIsInitialized();
 
     UFUNCTION(BlueprintCallable, Category = "RuStore LogListener")
     static URuStoreLogListener* Instance();
