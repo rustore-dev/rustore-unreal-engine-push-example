@@ -10,20 +10,24 @@ UMyMessagingServiceListener* UMyMessagingServiceListener::InstanceImpl()
 
 void UMyMessagingServiceListener::NewTokenResponse_Implementation(int64 requestId, FString& token)
 {
-    URuStoreCore::ShowToast(token);
+    URuStoreCore::LogWarn("MessagingServiceListener", token);
 }
 
 void UMyMessagingServiceListener::MessageReceivedResponse_Implementation(int64 requestId, FURuStoreRemoteMessage& message)
 {
-    URuStoreCore::ShowToast(message.messageId);
+    // to log
+    URuStoreCore::LogWarn("MessagingServiceListener", message.messageId);
+
+    // to blueprint event
+    OnMessageReceivedResponse.Broadcast(requestId, message);
 }
 
 void UMyMessagingServiceListener::DeletedMessagesResponse_Implementation(int64 requestId)
 {
-    URuStoreCore::ShowToast("Delete token");
+    URuStoreCore::LogWarn("MessagingServiceListener", "Delete token");
 }
 
 void UMyMessagingServiceListener::ErrorResponse_Implementation(int64 requestId, TArray<FURuStoreError>& errors)
 {
-    URuStoreCore::ShowToast("Error token");
+    URuStoreCore::LogWarn("MessagingServiceListener", "Error token");
 }

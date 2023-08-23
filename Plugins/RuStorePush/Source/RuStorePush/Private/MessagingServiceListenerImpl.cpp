@@ -20,13 +20,27 @@ void MessagingServiceListenerImpl::OnNewToken(FString token)
 void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* responseObject)
 {
     auto response = MakeShared<FURuStoreRemoteMessage, ESPMode::ThreadSafe>();
+
     response->messageId = responseObject->GetFString("messageId");
     response->priority = responseObject->GetInt("priority");
     response->ttl = responseObject->GetInt("ttl");
     response->collapseKey = responseObject->GetFString("collapseKey");
 
     auto jData = responseObject->GetAJObject("data", "Ljava/util/Map;");
-    auto jDataSet = jData->CallSpecificAJObject("entrySet", "Ljava/util/Set;");
+    auto jKeySet = jData->CallSpecificAJObject("keySet", "Ljava/util/Set;");
+    auto jKeyArray = jKeySet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
+    auto size = jKeySet->CallInt("size");
+    for (int i = 0; i < size; i++)
+    {
+        FString itemKey = jKeyArray->GetFStringArrayElement(i);
+        FString itemVal = responseObject->CallFString("GetDataElement", itemKey);
+        response->data.Add(itemKey, itemVal);
+    }
+    delete jKeyArray;
+    delete jKeySet;
+
+    /*auto jDataSet = jData->CallSpecificAJObject("entrySet", "Ljava/util/Set;");
+
     auto jDataArray = jDataSet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
     auto size = jDataSet->CallInt("size");
 
@@ -40,29 +54,30 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
             auto itemVal = p->CallFString("getValue");
             response->data.Add(itemKey, itemVal);
 
+            _LogWarn("test", itemKey);
+            _LogWarn("test", itemVal);
+
             delete p;
         }
     }
     delete jDataArray;
-    delete jDataSet;
+    delete jDataSet;*/
     delete jData;
 
     auto jRawData = responseObject->GetAJObject("rawData", "[B");
     if (jRawData != nullptr)
     {
-        int byteArraySize = jRawData->CallInt("size");
-
+        int byteArraySize = responseObject->CallInt("GetRawDataSize");
         for (int i = 0; i < byteArraySize; i++)
         {
-            uint8 item = jRawData->CallByte("get", i);
+            uint8 item = responseObject->CallByte("GetRawDataElement", i);
             response->rawData.Add(item);
         }
+
         delete jRawData;
     }
 
-    URuStoreCore::LogWarn("rustore_debug", "Read notification");
-
-    auto jNotification = responseObject->GetAJObject("notification", "Lru/rustore/sdk/pushclient/messaging/model/Notification;");
+    auto jNotification = responseObject->GetAJObject("notification", "Lru/rustore/unitysdk/pushclient/model/PushNotification;");
     if (jNotification != nullptr)
     {
         response->notification.title = jNotification->GetFString("title");

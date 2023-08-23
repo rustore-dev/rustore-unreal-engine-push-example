@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "JavaMethodSignature.h"
 #include "JavaTypeConverter.h"
+#include "AndroidJavaLog.h"
 
 namespace RuStoreSDK
 {
@@ -51,10 +52,13 @@ namespace RuStoreSDK
         T* Get(FString fieldName);
         int GetInt(FString fieldName);
         int GetLong(FString fieldName);
+        bool GetBool(FString fieldName);
         FString GetFString(FString fieldName);
         int GetEnum(FString fieldName, FString signature);
+        TArray<uint8>* GetByteArray(FString fieldName);
         AndroidJavaObject* GetAJObject(FString fieldName, FString signature = "");
         AndroidJavaObject* GetAJObjectArrayElement(int i);
+        FString GetFStringArrayElement(int i);
 
         void SetInterfaceName(FString asInterface);
         bool AttachCurrentThread();
@@ -149,6 +153,33 @@ namespace RuStoreSDK
             result = new AndroidJavaObject(localRef);
             result->UpdateToGlobalRef();
     #endif
+            return result;
+        }
+
+        template<typename... Args>
+        TArray<uint8>* CallByteArray(const FString methodName, Args... args)
+        {
+            TArray<uint8>* result = new TArray<uint8>();
+#if PLATFORM_ANDROID
+            FString methodSignature = JavaMethodSignature::MakeByteArray(args...);
+
+#ifdef RuStoreDebug
+            _LogInfo(RuStoreDebug, signature);
+#endif
+
+            jmethodID javaMethodId = env->GetStaticMethodID(javaClass, TCHAR_TO_ANSI(*methodName), TCHAR_TO_ANSI(*methodSignature));
+            jbyteArray jArray = (jbyteArray)env->CallObjectMethod(javaClass, javaMethodId, JavaTypeConverter::SetValue(env, args)...);
+
+            int length = env->GetArrayLength(jArray);
+            jbyte* data = env->GetByteArrayElements(jArray, nullptr);
+
+            for (int i = 0; i < length; i++)
+            {
+                result->Add(static_cast<uint8>(data[i]));
+            }
+
+            env->ReleaseByteArrayElements(jArray, data, 0);
+#endif
             return result;
         }
 
