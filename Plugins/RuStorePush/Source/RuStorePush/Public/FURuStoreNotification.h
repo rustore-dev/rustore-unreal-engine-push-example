@@ -22,24 +22,24 @@ public:
 		clickAction = "";
 	}
 
-    UPROPERTY()
+    UPROPERTY(BlueprintReadOnly)
 	FString title;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString body;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString channelId;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString imageUrl;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString color;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString icon;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	FString clickAction;
 };

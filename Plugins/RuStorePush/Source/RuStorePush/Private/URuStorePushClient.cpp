@@ -4,6 +4,8 @@
 #include "FeatureAvailabilityListenerImpl.h"
 #include "GetTokenListenerImpl.h"
 #include "DeleteTokenListenerImpl.h"
+#include "SendTestNotificationListenerImpl.h"
+#include "SubscribeTopicListenerImpl.h"
 #include "URuStoreCore.h"
 #include "URuStoreLogListener.h"
 #include "URuStoreMessagingServiceListener.h"
@@ -51,11 +53,12 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
     _application = new JavaApplication();
 
     auto clientJavaClass = MakeShared<AndroidJavaClass>("ru/rustore/unitysdk/pushclient/RuStoreUnityPushClient");
+    if (config.bTestModeEnable) clientJavaClass->CallStaticVoid("runInTestMode");
     clientJavaClass->CallStaticVoid("init", _application, config.projectId, FString("unreal"));
     _clientWrapper = clientJavaClass->GetStaticAJObject("INSTANCE");
 
     AndroidJavaObject jMessagingServiceListenerNULL("ru/rustore/unitysdk/pushclient/RuStoreUnityMessagingServiceListener", 0, false);
-    AndroidJavaObject jLogListenerNULL("ru/rustore/unitysdk/pushclient/UnityLogListener", 0, false);
+    AndroidJavaObject jLogListenerNULL("ru/rustore/unitysdk/pushclient/callbacks/UnityLogListener", 0, false);
 
     auto messagingServiceListener = (config.messagingServiceListener != nullptr)
         ? Cast<URuStoreMessagingServiceListener>(config.messagingServiceListener.GetObject())
@@ -73,7 +76,7 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
         ? logListener->GetJWrapper()
         : &jLogListenerNULL;
 
-    _clientWrapper->CallVoid("init", config.allowNativeErrorHandling, jMessagingServiceListener, jLogListener);
+    _clientWrapper->CallVoid("init", config.bAllowNativeErrorHandling, jMessagingServiceListener, jLogListener);
 	
     return bIsInitialized = true;
 }
@@ -131,6 +134,58 @@ long URuStorePushClient::DeleteToken(TFunction<void(long)> onSuccess, TFunction<
     return listener->GetId();
 }
 
+long URuStorePushClient::SendTestNotification(FURuStoreTestNotificationPayload& notification, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure)
+{
+    if (!URuStoreCore::IsPlatformSupported(onFailure)) return 0;
+    if (!bIsInitialized) return 0;
+
+    TArray<FString> dataKeys;
+    TArray<FString> dataValues;
+    for (auto It = notification.data.CreateConstIterator(); It; ++It)
+    {
+        dataKeys.Add(It.Key());
+        dataValues.Add(It.Value());
+    }
+
+    auto wrapperJavaClass = MakeShared<AndroidJavaClass>("com/Plugins/RuStoreBilling/TestNotificationPayloadWrapper");
+    auto jnotification = TSharedPtr<AndroidJavaObject, ESPMode::ThreadSafe>(wrapperJavaClass->CallStaticAJObject(
+        "CreateTestNotificationPayload",
+        "Lru/rustore/sdk/pushclient/messaging/model/TestNotificationPayload;",
+        notification.title,
+        notification.body,
+        notification.imageUrl,
+        dataKeys,
+        dataValues
+    ));
+
+    auto listener = ListenerBind(new SendTestNotificationListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item); }));
+    _clientWrapper->CallVoid("sendTestNotification", jnotification.Get(), listener->GetJWrapper());
+
+    return listener->GetId();
+}
+
+long URuStorePushClient::SubscribeToTopic(FString topicName, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure)
+{
+    if (!URuStoreCore::IsPlatformSupported(onFailure)) return 0;
+    if (!bIsInitialized) return 0;
+
+    auto listener = ListenerBind(new SubscribeTopicListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item); }));
+    _clientWrapper->CallVoid("subscribeToTopic", topicName, listener->GetJWrapper());
+
+    return listener->GetId();
+}
+
+long URuStorePushClient::UnsubscribeFromTopic(FString topicName, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure)
+{
+    if (!URuStoreCore::IsPlatformSupported(onFailure)) return 0;
+    if (!bIsInitialized) return 0;
+
+    auto listener = ListenerBind(new SubscribeTopicListenerImpl(onSuccess, onFailure, [this](RuStoreListener* item) { ListenerUnbind(item); }));
+    _clientWrapper->CallVoid("unsubscribeFromTopic", topicName, listener->GetJWrapper());
+
+    return listener->GetId();
+}
+
 void URuStorePushClient::CheckPushAvailability(int64& requestId)
 {
     requestId = CheckPushAvailability(
@@ -165,4 +220,43 @@ void URuStorePushClient::DeleteToken(int64& requestId)
             OnDeleteTokenError.Broadcast(requestId, *error);
         }
     );
+}
+
+void URuStorePushClient::SendTestNotification(FURuStoreTestNotificationPayload notification, int64& requestId)
+{
+    requestId = SendTestNotification(
+        notification,
+        [this](long requestId) {
+            OnSendTestNotificationResponse.Broadcast(requestId);
+        },
+        [this](long requestId, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            OnSendTestNotificationError.Broadcast(requestId, *error);
+        }
+    );
+}
+
+void URuStorePushClient::SubscribeToTopic(FString topicName, int64& requestId)
+{
+	requestId = SubscribeToTopic(
+		topicName,
+		[this](long requestId) {
+            OnSubscribeToTopicResponse.Broadcast(requestId);
+		},
+		[this](long requestId, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            OnSubscribeToTopicError.Broadcast(requestId, *error);
+		}
+	);
+}
+
+void URuStorePushClient::UnsubscribeFromTopic(FString topicName, int64& requestId)
+{
+	requestId = UnsubscribeFromTopic(
+		topicName,
+		[this](long requestId) {
+            OnUnsubscribeFromTopicResponse.Broadcast(requestId);
+		},
+		[this](long requestId, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            OnUnsubscribeFromTopicError.Broadcast(requestId, *error);
+		}
+	);
 }

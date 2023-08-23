@@ -8,61 +8,71 @@
   <resourceCopies>
     <copyDir src="$S(PluginDir)/ThirdParty/Android" dst="$S(BuildDir)/libs" />
   </resourceCopies>
-  
+
   <androidManifestUpdates>
-    <addElements tag="application">
-      <service
-        xmlns:tools="http://schemas.android.com/tools"
-        android:name="ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService"
-        android:exported="true"
-        tools:ignore="ExportedService">
-        <intent-filter>
-          <action android:name="ru.rustore.sdk.pushclient.MESSAGING_EVENT" />
-        </intent-filter>
-      </service>
-    </addElements>
+    <addAttribute tag="application" name="android:usesCleartextTraffic" value="true" />
     
+    <setBool result="bHasSplashActivity" value="false" />
+    
+    <!-- For each activity -->
     <loopElements tag="activity">
-      <!-- Find UE GameActivity -->
       <setStringFromAttribute result="activityName" tag="$" name="android:name" />
-      <setBoolIsEqual result="bUE4GameActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.GameActivity" />
-	  <!-- Add android:exported attribute for UE4 GameActivity -->
-	  <if condition="bUE4GameActivity">
-		<true>
-			<addAttribute tag="$" name="android:exported" value="true"/>
-		</true>
-	  </if>
-      <setBoolIsEqual result="bUE5GameActivity" arg1="$S(activityName)" arg2="com.epicgames.unreal.GameActivity" />
-      <setBoolOr result="bGameActivity" arg1="$B(bUE4GameActivity)" arg2="$B(bUE5GameActivity)" />
-      <if condition="bGameActivity">
+      
+      <!-- Find UE SplashActivity -->
+      <setBoolContains result="bIsSplashActivity" source="$S(activityName)" find="SplashActivity" />
+      <if condition="bIsSplashActivity">
         <true>
-          <!-- Find first intent-filter -->
-          <setBool result="bFirstIntentFilter" value="true" />
+          <setBool result="bHasSplashActivity" value="true" />
           <loopElements tag="intent-filter">
-            <if condition="bFirstIntentFilter">
-              <true>
-                <addElements tag="$">
-                  <category android:name="android.intent.category.DEFAULT" />
-                </addElements>
-                <setBool result="bFirstIntentFilter" value="false" />
-              </true>
-            </if>
+            <addElements tag="$">
+              <category android:name="android.intent.category.DEFAULT" />
+            </addElements>
           </loopElements>
         </true>
       </if>
+      
+      <!-- Find UE GameActivity -->
+      <setBoolContains result="bIsGameActivity" source="$S(activityName)" find="GameActivity" />
+      <if condition="bIsGameActivity">
+        <true>
+          <!-- Set android:launchMode attribute as singleInstance -->
+          <removeAttribute tag="$" name="android:launchMode" />
+          <addAttribute tag="$" name="android:launchMode" value="singleInstance" />
+          
+          <if condition="bHasSplashActivity">
+            <false>
+              <removeElement tag="intent-filter" once="true" />
+            </false>
+          </if>
+        </true>
+      </if>
+      
+    <!-- For each activity -->
     </loopElements>
-    
-    <addElements tag="application">
-      <service
-        xmlns:tools="http://schemas.android.com/tools"
-        android:name="ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService"
-        android:exported="true"
-        tools:ignore="ExportedService">
-        <intent-filter>
-          <action android:name="ru.rustore.sdk.pushclient.MESSAGING_EVENT" />
-        </intent-filter>
-      </service>
-    </addElements>
+
+    <if condition="bHasSplashActivity">
+      <false>
+        <addElements tag="application">
+          <activity android:name="com.Plugins.RuStorePush.RuStorePushActivity" android:label="@string/app_name" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:configChanges="mcc|mnc|uiMode|density|screenSize|smallestScreenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|touchscreen|locale|fontScale|layoutDirection" android:resizeableActivity="false" android:launchMode="singleTask" android:screenOrientation="sensor" android:debuggable="false">
+          <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+            <category android:name="android.intent.category.DEFAULT" />
+          </intent-filter>
+        </activity>
+        <service
+          xmlns:tools="http://schemas.android.com/tools"
+          android:name="ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService"
+          android:exported="true"
+          tools:ignore="ExportedService">
+          <intent-filter>
+            <action android:name="ru.rustore.sdk.pushclient.MESSAGING_EVENT" />
+          </intent-filter>
+        </service>
+      </addElements>
+      </false>
+    </if>
+
   </androidManifestUpdates>
   
   <buildGradleAdditions>
@@ -75,7 +85,7 @@
       
       dependencies {
         // RuStore Push
-        implementation ("ru.rustore.sdk:pushclient:0.3.0$push_type")
+        implementation ("ru.rustore.sdk:pushclient:0.5.0$push_type")
         implementation fileTree(include: ["RuStoreUnityPushClient${push_type}.aar"], dir: 'src/main/libs')
       }
     </insert>

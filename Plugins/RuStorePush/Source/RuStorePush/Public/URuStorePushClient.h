@@ -9,6 +9,7 @@
 #include "FURuStorePushClientConfig.h"
 #include "FURuStoreError.h"
 #include "FURuStoreFeatureAvailabilityResult.h"
+#include "FURustoreTestNotificationPayload.h"
 #include "RuStoreListener.h"
 #include "URuStorePushClient.generated.h"
 
@@ -20,6 +21,15 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetTokenResponseDelegate, int64, r
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDeleteTokenErrorDelegate, int64, requestId, FURuStoreError, error);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDeleteTokenResponseDelegate, int64, requestId);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendTestNotificationErrorDelegate, int64, requestId, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSendTestNotificationResponseDelegate, int64, requestId);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSubscribeToTopicErrorDelegate, int64, requestId, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSubscribeToTopicResponseDelegate, int64, requestId);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDesubscribeToTopicErrorDelegate, int64, requestId, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDesubscribeToTopicResponseDelegate, int64, requestId);
 
 UCLASS(Blueprintable)
 class RUSTOREPUSH_API URuStorePushClient : public UObject, public RuStoreListenerContainer
@@ -58,7 +68,9 @@ public:
     long CheckPushAvailability(TFunction<void(long, TSharedPtr<FURuStoreFeatureAvailabilityResult, ESPMode::ThreadSafe>)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
     long GetToken(TFunction<void(long, FString)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
     long DeleteToken(TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
-
+    long SendTestNotification(FURuStoreTestNotificationPayload& notification, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
+	long SubscribeToTopic(FString topicName, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
+	long UnsubscribeFromTopic(FString topicName, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
 
     // 
     UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
@@ -91,4 +103,37 @@ public:
 
     UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
     FDeleteTokenResponseDelegate OnDeleteTokenResponse;
+
+
+    // 
+    UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
+    void SendTestNotification(FURuStoreTestNotificationPayload notification, int64& requestId);
+
+    UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
+    FSendTestNotificationErrorDelegate OnSendTestNotificationError;
+
+    UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
+    FSendTestNotificationResponseDelegate OnSendTestNotificationResponse;
+
+
+	// 
+	UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
+	void SubscribeToTopic(FString topicName, int64& requestId);
+
+	UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
+	FSubscribeToTopicErrorDelegate OnSubscribeToTopicError;
+
+	UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
+	FSubscribeToTopicResponseDelegate OnSubscribeToTopicResponse;
+
+
+	// 
+	UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
+	void UnsubscribeFromTopic(FString topicName, int64& requestId);
+
+	UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
+	FDesubscribeToTopicErrorDelegate OnUnsubscribeFromTopicError;
+
+	UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
+	FDesubscribeToTopicResponseDelegate OnUnsubscribeFromTopicResponse;
 };
