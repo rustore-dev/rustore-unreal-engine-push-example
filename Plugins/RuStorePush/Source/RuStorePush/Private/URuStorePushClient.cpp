@@ -51,7 +51,7 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
     _application = new JavaApplication();
 
     auto clientJavaClass = MakeShared<AndroidJavaClass>("ru/rustore/unitysdk/pushclient/RuStoreUnityPushClient");
-    clientJavaClass->CallStaticVoid("init", _application, config.projectId);
+    clientJavaClass->CallStaticVoid("init", _application, config.projectId, FString("unreal"));
     _clientWrapper = clientJavaClass->GetStaticAJObject("INSTANCE");
 
     AndroidJavaObject jMessagingServiceListenerNULL("ru/rustore/unitysdk/pushclient/RuStoreUnityMessagingServiceListener", 0, false);
