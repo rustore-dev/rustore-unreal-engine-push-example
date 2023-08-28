@@ -11,12 +11,6 @@
     </loopElements>
   </androidManifestUpdates>
 
-  <gradleProperties>
-    <insert>
-      TARGET_SDK_VERSION=31
-    </insert>
-  </gradleProperties>
-
   <androidManifestUpdates>
     <addElements tag="application">
       <meta-data

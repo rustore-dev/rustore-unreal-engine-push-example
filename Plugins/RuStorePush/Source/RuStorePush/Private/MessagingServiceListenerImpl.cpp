@@ -45,30 +45,6 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
     }
     delete jKeyArray;
     delete jKeySet;
-
-    /*auto jDataSet = jData->CallSpecificAJObject("entrySet", "Ljava/util/Set;");
-
-    auto jDataArray = jDataSet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
-    auto size = jDataSet->CallInt("size");
-
-    for (int i = 0; i < size; i++)
-    {
-        auto p = jDataArray->GetAJObjectArrayElement(i);
-        if (p != nullptr)
-        {
-            auto itemKey = p->CallFString("getKey");
-
-            auto itemVal = p->CallFString("getValue");
-            response->data.Add(itemKey, itemVal);
-
-            _LogWarn("test", itemKey);
-            _LogWarn("test", itemVal);
-
-            delete p;
-        }
-    }
-    delete jDataArray;
-    delete jDataSet;*/
     delete jData;
 
 	auto jRawData = responseObject->CallByteArray("getRawData");

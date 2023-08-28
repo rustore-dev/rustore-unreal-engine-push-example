@@ -20,7 +20,6 @@ public:
 		messagingServiceListener = TScriptInterface<URuStoreMessagingServiceListenerInterface>();
 		logListener = TScriptInterface<URuStoreLogListenerInterface>();
 		projectId = "";
-		bTestModeEnable = false;
 	}
 
 	UPROPERTY(BlueprintReadWrite)
@@ -34,7 +33,4 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FString projectId;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bTestModeEnable;
 };

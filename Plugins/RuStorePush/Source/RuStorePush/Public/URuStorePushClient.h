@@ -22,9 +22,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGetTokenResponseDelegate, int64, r
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDeleteTokenErrorDelegate, int64, requestId, FURuStoreError, error);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDeleteTokenResponseDelegate, int64, requestId);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSendTestNotificationErrorDelegate, int64, requestId, FURuStoreError, error);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSendTestNotificationResponseDelegate, int64, requestId);
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSubscribeToTopicErrorDelegate, int64, requestId, FURuStoreError, error);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSubscribeToTopicResponseDelegate, int64, requestId);
 
@@ -68,7 +65,6 @@ public:
     long CheckPushAvailability(TFunction<void(long, TSharedPtr<FURuStoreFeatureAvailabilityResult, ESPMode::ThreadSafe>)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
     long GetToken(TFunction<void(long, FString)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
     long DeleteToken(TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
-    long SendTestNotification(FURuStoreTestNotificationPayload& notification, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
 	long SubscribeToTopic(FString topicName, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
 	long UnsubscribeFromTopic(FString topicName, TFunction<void(long)> onSuccess, TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure);
 
@@ -103,17 +99,6 @@ public:
 
     UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
     FDeleteTokenResponseDelegate OnDeleteTokenResponse;
-
-
-    // 
-    UFUNCTION(BlueprintCallable, Category = "RuStore Push Client")
-    void SendTestNotification(FURuStoreTestNotificationPayload notification, int64& requestId);
-
-    UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
-    FSendTestNotificationErrorDelegate OnSendTestNotificationError;
-
-    UPROPERTY(BlueprintAssignable, Category = "RuStore Push Client")
-    FSendTestNotificationResponseDelegate OnSendTestNotificationResponse;
 
 
 	// 
