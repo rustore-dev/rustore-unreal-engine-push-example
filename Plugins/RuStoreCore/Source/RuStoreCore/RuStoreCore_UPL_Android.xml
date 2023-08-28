@@ -6,7 +6,7 @@
   </prebuildCopies>
 
   <resourceCopies>
-    <copyDir src="$S(PluginDir)/ThirdParty/Android" dst="$S(BuildDir)/libs" />
+    <copyDir src="$S(PluginDir)/ThirdParty/Android/libs" dst="$S(BuildDir)/libs" />
   </resourceCopies>
   
   <gradleProperties>

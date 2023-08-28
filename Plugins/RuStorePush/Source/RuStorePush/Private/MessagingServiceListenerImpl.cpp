@@ -2,7 +2,6 @@
 
 #include "MessagingServiceListenerImpl.h"
 #include "CallbackHandler.h"
-#include "URuStoreCore.h"
 
 using namespace RuStoreSDK;
 
@@ -21,20 +20,28 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
 {
     auto response = MakeShared<FURuStoreRemoteMessage, ESPMode::ThreadSafe>();
 
-    response->messageId = responseObject->GetFString("messageId");
-    response->priority = responseObject->GetInt("priority");
-    response->ttl = responseObject->GetInt("ttl");
-    response->collapseKey = responseObject->GetFString("collapseKey");
+    response->messageId = responseObject->CallFString("getMessageId");
+    response->priority = responseObject->CallInt("getPriority");
+    response->ttl = responseObject->CallInt("getTtl");
+    response->collapseKey = responseObject->CallFString("getCollapseKey");
 
-    auto jData = responseObject->GetAJObject("data", "Ljava/util/Map;");
+    auto jData = responseObject->CallSpecificAJObject("getData", "Ljava/util/Map;");
     auto jKeySet = jData->CallSpecificAJObject("keySet", "Ljava/util/Set;");
     auto jKeyArray = jKeySet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
     auto size = jKeySet->CallInt("size");
+
     for (int i = 0; i < size; i++)
     {
+        AndroidJavaObject* itemKeyObj = jKeyArray->GetAJObjectArrayElement(i);
+        AndroidJavaObject* itemValObj = jData->CallAJObject("get", itemKeyObj);
+
         FString itemKey = jKeyArray->GetFStringArrayElement(i);
-        FString itemVal = responseObject->CallFString("GetDataElement", itemKey);
+        FString itemVal = itemValObj->ConvertToFString();
+        
         response->data.Add(itemKey, itemVal);
+
+        delete itemKeyObj;
+        delete itemValObj;
     }
     delete jKeyArray;
     delete jKeySet;
@@ -64,30 +71,25 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
     delete jDataSet;*/
     delete jData;
 
-    auto jRawData = responseObject->GetAJObject("rawData", "[B");
+	auto jRawData = responseObject->CallByteArray("getRawData");
     if (jRawData != nullptr)
     {
-        int byteArraySize = responseObject->CallInt("GetRawDataSize");
-        for (int i = 0; i < byteArraySize; i++)
-        {
-            uint8 item = responseObject->CallByte("GetRawDataElement", i);
-            response->rawData.Add(item);
-        }
+		response->rawData.Append(jRawData->GetData(), jRawData->Num());
 
         delete jRawData;
     }
 
-    auto jNotification = responseObject->GetAJObject("notification", "Lru/rustore/unitysdk/pushclient/model/PushNotification;");
+    auto jNotification = responseObject->CallSpecificAJObject("getNotification", "Lru/rustore/sdk/pushclient/messaging/model/Notification;");
     if (jNotification != nullptr)
     {
-        response->notification.title = jNotification->GetFString("title");
-        response->notification.body = jNotification->GetFString("body");
-        response->notification.channelId = jNotification->GetFString("channelId");
-        response->notification.color = jNotification->GetFString("color");
-        response->notification.icon = jNotification->GetFString("icon");
-        response->notification.clickAction = jNotification->GetFString("clickAction");
+        response->notification.title = jNotification->CallFString("getTitle");
+        response->notification.body = jNotification->CallFString("getBody");
+        response->notification.channelId = jNotification->CallFString("getChannelId");
+        response->notification.color = jNotification->CallFString("getColor");
+        response->notification.icon = jNotification->CallFString("getIcon");
+        response->notification.clickAction = jNotification->CallFString("getClickAction");
 
-        auto jImageUrl = jNotification->GetAJObject("imageUrl", "Landroid/net/Uri;");
+        AndroidJavaObject* jImageUrl = jNotification->CallSpecificAJObject("getImageUrl", "Landroid/net/Uri;");
         if (jImageUrl != nullptr)
         {
             response->notification.imageUrl = jImageUrl->CallFString("toString");

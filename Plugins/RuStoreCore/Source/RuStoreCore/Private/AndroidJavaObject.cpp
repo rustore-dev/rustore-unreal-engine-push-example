@@ -116,7 +116,7 @@ AndroidJavaObject* AndroidJavaObject::UpdateToGlobalRef()
 #if PLATFORM_ANDROID
     javaObject = env->NewGlobalRef(javaObject);
 #endif
-    bIsGlobalRef = true;
+	bIsGlobalRef = true;
 
     return this;
 }
@@ -219,6 +219,7 @@ int AndroidJavaObject::GetEnum(FString fieldName, FString signature)
 TArray<uint8>* AndroidJavaObject::GetByteArray(FString fieldName)
 {
     TArray<uint8>* result = new TArray<uint8>();
+
 #if PLATFORM_ANDROID
     FString signature = JavaMethodSignature::getName(result);
     jfieldID fieldId = env->GetFieldID(javaClass, TCHAR_TO_ANSI(*fieldName), TCHAR_TO_ANSI(*signature));
@@ -235,6 +236,7 @@ TArray<uint8>* AndroidJavaObject::GetByteArray(FString fieldName)
     }
     env->ReleaseByteArrayElements(jArray, data, 0);
 #endif
+
     return result;
 }
 
@@ -250,11 +252,11 @@ AndroidJavaObject* AndroidJavaObject::GetStaticAJObject(FString fieldName, FStri
     jfieldID javaFieldID = env->GetStaticFieldID(javaClass, TCHAR_TO_ANSI(*fieldName), TCHAR_TO_ANSI(*javaClassSignature));
     jobject localRef = env->GetStaticObjectField(javaClass, javaFieldID);
 
-    if (localRef != nullptr)
-    {
-        result = new AndroidJavaObject(javaClass, localRef);
-        result->UpdateToGlobalRef();
-    }
+	if (localRef != nullptr)
+	{
+		result = new AndroidJavaObject(javaClass, localRef);
+		result->UpdateToGlobalRef();
+	}
 #endif
 
     return result;
@@ -270,16 +272,16 @@ AndroidJavaObject* AndroidJavaObject::GetAJObject(FString fieldName, FString sig
         delete _javaClass;
     }
 
-#ifdef RuStoreDebug
-    _LogInfo(RuStoreDebug, signature);
-#endif
-
     AndroidJavaObject* result = nullptr;
 
 #if PLATFORM_ANDROID
-    jfieldID fieldId = env->GetFieldID(javaClass, TCHAR_TO_ANSI(*fieldName), TCHAR_TO_ANSI(*signature));
-    jobject localRef = env->GetObjectField(javaObject, fieldId);
+#ifdef RuStoreDebug
+	_LogInfo(RuStoreDebug, signature);
+#endif
 
+    jfieldID fieldId = env->GetFieldID(javaClass, TCHAR_TO_ANSI(*fieldName), TCHAR_TO_ANSI(*signature));
+    
+    jobject localRef = env->GetObjectField(javaObject, fieldId);
     if (localRef != nullptr)
     {
         result = new AndroidJavaObject(localRef);
@@ -292,17 +294,17 @@ AndroidJavaObject* AndroidJavaObject::GetAJObject(FString fieldName, FString sig
 
 AndroidJavaObject* AndroidJavaObject::GetAJObjectArrayElement(int i)
 {
-    AndroidJavaObject* result = nullptr;
+	AndroidJavaObject* result = nullptr;
 
 #if PLATFORM_ANDROID
-    jobjectArray arr = reinterpret_cast<jobjectArray>(javaObject);
-    jobject localRef = env->GetObjectArrayElement(arr, i);
+	jobjectArray arr = reinterpret_cast<jobjectArray>(javaObject);
+	jobject element = env->GetObjectArrayElement(arr, i);
 
-    if (localRef != nullptr)
-    {
-        result = new AndroidJavaObject(localRef);
-        result->UpdateToGlobalRef();
-    }
+	if (element != nullptr)
+	{
+		result = new AndroidJavaObject(element);
+		result->UpdateToGlobalRef();
+	}
 #endif
 
     return result;
@@ -320,6 +322,18 @@ FString AndroidJavaObject::GetFStringArrayElement(int i)
     {
         result = FJavaHelper::FStringFromParam(env, strResult);
     }
+#endif
+
+    return result;
+}
+
+FString RuStoreSDK::AndroidJavaObject::ConvertToFString()
+{
+    FString result = "";
+
+#if PLATFORM_ANDROID
+    jstring strResult = (jstring)javaObject;
+    result = FJavaHelper::FStringFromParam(env, strResult);
 #endif
 
     return result;
