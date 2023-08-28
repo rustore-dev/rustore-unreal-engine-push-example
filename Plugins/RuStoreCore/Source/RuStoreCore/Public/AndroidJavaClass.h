@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AndroidJavaObject.h"
 
-#define RuStoreDebug "RuStoreDebug"
+//#define RuStoreDebug "RuStoreDebug"
 
 namespace RuStoreSDK
 {

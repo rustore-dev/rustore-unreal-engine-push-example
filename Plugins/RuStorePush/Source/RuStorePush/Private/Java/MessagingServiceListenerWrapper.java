@@ -6,8 +6,6 @@ import com.Plugins.RuStoreCore.IRuStoreListener;
 import java.util.List;
 import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException;
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage;
-import ru.rustore.unitysdk.pushclient.model.PushConverter;
-import ru.rustore.unitysdk.pushclient.model.PushMessage;
 import ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingServiceListener;
 
 public class MessagingServiceListenerWrapper implements IRuStoreListener, RuStoreUnityMessagingServiceListener
@@ -18,7 +16,7 @@ public class MessagingServiceListenerWrapper implements IRuStoreListener, RuStor
     private long cppPointer = 0;
 
     private native void NativeOnNewToken(long pointer, String token);
-    private native void NativeOnMessageReceived(long pointer, PushMessage message);
+    private native void NativeOnMessageReceived(long pointer, RemoteMessage message2);
     private native void NativeOnDeletedMessages(long pointer);
     private native void NativeOnError(long pointer, List<RuStorePushClientException> errors);
 
@@ -44,8 +42,7 @@ public class MessagingServiceListenerWrapper implements IRuStoreListener, RuStor
     public void OnMessageReceived(RemoteMessage message) {
         synchronized (mutex) {
             if (cppPointer != 0) {
-                PushMessage pushMessage = PushConverter.Convert(message);
-                NativeOnMessageReceived(cppPointer, pushMessage);
+				NativeOnMessageReceived(cppPointer, message);
             }
         }
     }
