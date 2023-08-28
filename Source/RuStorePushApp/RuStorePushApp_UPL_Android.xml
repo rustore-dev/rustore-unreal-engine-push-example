@@ -6,6 +6,18 @@
   </resourceCopies>
 
   <androidManifestUpdates>
+    <loopElements tag="activity">
+      <addAttribute tag="$" name="android:exported" value="true" />
+    </loopElements>
+  </androidManifestUpdates>
+
+  <gradleProperties>
+    <insert>
+      TARGET_SDK_VERSION=31
+    </insert>
+  </gradleProperties>
+
+  <androidManifestUpdates>
     <addElements tag="application">
       <meta-data
         android:name="ru.rustore.sdk.pushclient.default_notification_color"

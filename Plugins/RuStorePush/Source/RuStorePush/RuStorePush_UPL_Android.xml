@@ -6,7 +6,7 @@
   </prebuildCopies>
 
   <resourceCopies>
-    <copyDir src="$S(PluginDir)/ThirdParty/Android" dst="$S(BuildDir)/libs" />
+    <copyDir src="$S(PluginDir)/ThirdParty/Android/libs" dst="$S(BuildDir)/libs" />
   </resourceCopies>
 
   <androidManifestUpdates>
@@ -53,7 +53,7 @@
     <if condition="bHasSplashActivity">
       <false>
         <addElements tag="application">
-          <activity android:name="com.Plugins.RuStorePush.RuStorePushActivity" android:label="@string/app_name" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:configChanges="mcc|mnc|uiMode|density|screenSize|smallestScreenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|touchscreen|locale|fontScale|layoutDirection" android:resizeableActivity="false" android:launchMode="singleTask" android:screenOrientation="sensor" android:debuggable="false">
+          <activity android:name="com.Plugins.RuStorePush.RuStorePushActivity" android:exported="true" android:label="@string/app_name" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" android:configChanges="mcc|mnc|uiMode|density|screenSize|smallestScreenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|touchscreen|locale|fontScale|layoutDirection" android:resizeableActivity="false" android:launchMode="singleTask" android:screenOrientation="sensor" android:debuggable="false">
           <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
@@ -85,7 +85,7 @@
       
       dependencies {
         // RuStore Push
-        implementation ("ru.rustore.sdk:pushclient:0.5.0$push_type")
+        implementation ("ru.rustore.sdk:pushclient:0.6.0$push_type")
         implementation fileTree(include: ["RuStoreUnityPushClient${push_type}.aar"], dir: 'src/main/libs')
       }
     </insert>
