@@ -4,6 +4,7 @@ package com.Plugins.RuStorePush;
 
 import com.Plugins.RuStoreCore.IRuStoreListener;
 import java.util.List;
+import java.util.Map;
 import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException;
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage;
 import ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingServiceListener;
@@ -19,6 +20,10 @@ public class MessagingServiceListenerWrapper implements IRuStoreListener, RuStor
     private native void NativeOnMessageReceived(long pointer, RemoteMessage message2);
     private native void NativeOnDeletedMessages(long pointer);
     private native void NativeOnError(long pointer, List<RuStorePushClientException> errors);
+
+	public static String GetValue(Map<String, String> data, String key) {
+		return data.get(key);
+	}
 
     public static synchronized MessagingServiceListenerWrapper GetInstance() {
         return instance;

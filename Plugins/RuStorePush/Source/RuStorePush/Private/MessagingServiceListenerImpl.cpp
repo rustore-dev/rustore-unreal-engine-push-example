@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MessagingServiceListenerImpl.h"
+#include "AndroidJavaClass.h"
 #include "CallbackHandler.h"
 
 using namespace RuStoreSDK;
@@ -26,22 +27,20 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
     response->collapseKey = responseObject->CallFString("getCollapseKey");
 
     auto jData = responseObject->CallSpecificAJObject("getData", "Ljava/util/Map;");
+	jData->SetInterfaceName("java/util/Map");
+
     auto jKeySet = jData->CallSpecificAJObject("keySet", "Ljava/util/Set;");
     auto jKeyArray = jKeySet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
     auto size = jKeySet->CallInt("size");
 
     for (int i = 0; i < size; i++)
     {
-        AndroidJavaObject* itemKeyObj = jKeyArray->GetAJObjectArrayElement(i);
-        AndroidJavaObject* itemValObj = jData->CallAJObject("get", itemKeyObj);
+		FString itemKey = jKeyArray->GetFStringArrayElement(i);
+		AndroidJavaClass* converter = new AndroidJavaClass("com/Plugins/RuStorePush/MessagingServiceListenerWrapper");
+		FString itemVal = converter->CallStaticFString("GetValue", jData, itemKey);
+		response->data.Add(itemKey, itemVal);
 
-        FString itemKey = jKeyArray->GetFStringArrayElement(i);
-        FString itemVal = itemValObj->ConvertToFString();
-        
-        response->data.Add(itemKey, itemVal);
-
-        delete itemKeyObj;
-        delete itemValObj;
+		delete converter;
     }
     delete jKeyArray;
     delete jKeySet;
