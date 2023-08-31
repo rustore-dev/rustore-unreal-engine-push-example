@@ -29,6 +29,11 @@ namespace RuStoreSDK
     #if PLATFORM_ANDROID
             JNIEnv* env = FAndroidApplication::GetJavaEnv();
             jfieldID javaFieldID = env->GetStaticFieldID(javaClass, TCHAR_TO_ANSI(*fieldName), TCHAR_TO_ANSI(*_classSignature));
+
+#ifdef RuStoreDebug
+            _LogInfo(RuStoreDebug, _classSignature);
+#endif
+
             jobject javaObject = env->NewGlobalRef(env->GetStaticObjectField(javaClass, javaFieldID));
             result = new AndroidJavaObject(javaClass, javaObject);
             result->UpdateToGlobalRef();
@@ -43,6 +48,11 @@ namespace RuStoreSDK
     #if PLATFORM_ANDROID
             JNIEnv* env = FAndroidApplication::GetJavaEnv();
             FString methodSignature = JavaMethodSignature::MakeVoid(args...);
+
+#ifdef RuStoreDebug
+            _LogInfo(RuStoreDebug, methodSignature);
+#endif
+
             jmethodID javaMethodId = env->GetStaticMethodID(javaClass, TCHAR_TO_ANSI(*methodName), TCHAR_TO_ANSI(*methodSignature));
             env->CallStaticVoidMethod(javaClass, javaMethodId, JavaTypeConverter::SetValue(env, args)...);
     #endif
@@ -55,6 +65,11 @@ namespace RuStoreSDK
 #if PLATFORM_ANDROID
             JNIEnv* env = FAndroidApplication::GetJavaEnv();
             FString methodSignature = JavaMethodSignature::MakeBool(args...);
+
+#ifdef RuStoreDebug
+            _LogInfo(RuStoreDebug, methodSignature);
+#endif
+
             jmethodID javaMethodId = env->GetStaticMethodID(javaClass, TCHAR_TO_ANSI(*methodName), TCHAR_TO_ANSI(*methodSignature));
             result = env->CallStaticBooleanMethod(javaClass, javaMethodId, JavaTypeConverter::SetValue(env, args)...);
 #endif
@@ -68,6 +83,11 @@ namespace RuStoreSDK
     #if PLATFORM_ANDROID
             JNIEnv* env = FAndroidApplication::GetJavaEnv();
             FString methodSignature = JavaMethodSignature::MakeFString(args...);
+
+#ifdef RuStoreDebug
+            _LogInfo(RuStoreDebug, methodSignature);
+#endif
+
             jmethodID javaMethodId = env->GetStaticMethodID(javaClass, TCHAR_TO_ANSI(*methodName), TCHAR_TO_ANSI(*methodSignature));
             jstring strResult = (jstring)env->CallStaticObjectMethod(javaClass, javaMethodId, JavaTypeConverter::SetValue(env, args)...);
             result = FJavaHelper::FStringFromParam(env, strResult);
@@ -103,6 +123,11 @@ namespace RuStoreSDK
 #if PLATFORM_ANDROID
             JNIEnv* env = FAndroidApplication::GetJavaEnv();
             FString methodSignature = JavaMethodSignature::MakeByteArray(args...);
+
+#ifdef RuStoreDebug
+            _LogInfo(RuStoreDebug, methodSignature);
+#endif
+
             jmethodID javaMethodId = env->GetStaticMethodID(javaClass, TCHAR_TO_ANSI(*methodName), TCHAR_TO_ANSI(*methodSignature));
             jbyteArray jArray = (jbyteArray)env->CallStaticObjectMethod(javaClass, javaMethodId, JavaTypeConverter::SetValue(env, args)...);
 
