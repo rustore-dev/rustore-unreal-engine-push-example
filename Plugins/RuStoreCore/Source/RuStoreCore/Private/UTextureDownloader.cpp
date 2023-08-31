@@ -5,6 +5,8 @@
 #include "Async/Async.h"
 #include "Serialization/BulkData.h"
 
+using namespace RuStoreSDK;
+
 UTextureDownloader::UTextureDownloader(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
