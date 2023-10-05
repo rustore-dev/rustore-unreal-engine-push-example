@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <prebuildCopies>
+    <copyDir src="$S(PluginDir)/Private/Java" dst="$S(BuildDir)/src/com/Plugins/RuStorePush" />
+  </prebuildCopies>
+
+  <resourceCopies>
+    <copyDir src="$S(PluginDir)/ThirdParty/Android" dst="$S(BuildDir)/libs" />
+  </resourceCopies>
+  
+  <androidManifestUpdates>
+    <addElements tag="application">
+      <service
+        xmlns:tools="http://schemas.android.com/tools"
+        android:name="ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService"
+        android:exported="true"
+        tools:ignore="ExportedService">
+        <intent-filter>
+          <action android:name="ru.rustore.sdk.pushclient.MESSAGING_EVENT" />
+        </intent-filter>
+      </service>
+    </addElements>
+    
+    <loopElements tag="activity">
+      <!-- Find UE GameActivity -->
+      <setStringFromAttribute result="activityName" tag="$" name="android:name" />
+      <setBoolIsEqual result="bUE4GameActivity" arg1="$S(activityName)" arg2="com.epicgames.ue4.GameActivity" />
+	  <!-- Add android:exported attribute for UE4 GameActivity -->
+	  <if condition="bUE4GameActivity">
+		<true>
+			<addAttribute tag="$" name="android:exported" value="true"/>
+		</true>
+	  </if>
+      <setBoolIsEqual result="bUE5GameActivity" arg1="$S(activityName)" arg2="com.epicgames.unreal.GameActivity" />
+      <setBoolOr result="bGameActivity" arg1="$B(bUE4GameActivity)" arg2="$B(bUE5GameActivity)" />
+      <if condition="bGameActivity">
+        <true>
+          <!-- Find first intent-filter -->
+          <setBool result="bFirstIntentFilter" value="true" />
+          <loopElements tag="intent-filter">
+            <if condition="bFirstIntentFilter">
+              <true>
+                <addElements tag="$">
+                  <category android:name="android.intent.category.DEFAULT" />
+                </addElements>
+                <setBool result="bFirstIntentFilter" value="false" />
+              </true>
+            </if>
+          </loopElements>
+        </true>
+      </if>
+    </loopElements>
+    
+    <addElements tag="application">
+      <service
+        xmlns:tools="http://schemas.android.com/tools"
+        android:name="ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService"
+        android:exported="true"
+        tools:ignore="ExportedService">
+        <intent-filter>
+          <action android:name="ru.rustore.sdk.pushclient.MESSAGING_EVENT" />
+        </intent-filter>
+      </service>
+    </addElements>
+  </androidManifestUpdates>
+  
+  <buildGradleAdditions>
+    <insert>
+      ext.push_type = ''
+      
+      if (project.hasProperty('rustore_sdk_type')) {
+        push_type = rustore_sdk_type
+      }
+      
+      dependencies {
+        // RuStore Push
+        implementation ("ru.rustore.sdk:pushclient:0.1.8$push_type")
+        implementation fileTree(include: ["RuStoreUnityPushClient${push_type}.aar"], dir: 'src/main/libs')
+      }
+    </insert>
+  </buildGradleAdditions>
+
+</root>
