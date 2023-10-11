@@ -14,7 +14,7 @@ namespace RuStoreSDK
             TFunction<void(long)> onSuccess,
             TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure,
             TFunction<void(RuStoreListener*)> onFinish
-        ) : SimpleResponseListener("com/Plugins/RuStorePush/SendTestNotificationListenerWrapper", "ru/rustore/unitysdk/pushclient/callbacks/SendTestNotificationListener", onSuccess, onFailure, onFinish)
+        ) : SimpleResponseListener("ru/rustore/unitysdk/pushclient/wrappers/SendTestNotificationListenerWrapper", "ru/rustore/unitysdk/pushclient/callbacks/SendTestNotificationListener", onSuccess, onFailure, onFinish)
         {
         }
 

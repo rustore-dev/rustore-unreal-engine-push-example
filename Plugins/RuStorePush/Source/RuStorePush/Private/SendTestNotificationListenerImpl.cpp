@@ -11,13 +11,13 @@ SendTestNotificationListenerImpl::~SendTestNotificationListenerImpl()
 #if PLATFORM_ANDROID
 extern "C"
 {
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_SendTestNotificationListenerWrapper_NativeOnSuccess(JNIEnv* env, jobject, jlong pointer)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_SendTestNotificationListenerWrapper_NativeOnSuccess(JNIEnv* env, jobject, jlong pointer)
     {
         auto castobj = reinterpret_cast<SendTestNotificationListenerImpl*>(pointer);
         castobj->OnSuccess();
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_SendTestNotificationListenerWrapper_NativeOnFailure(JNIEnv*, jobject, jlong pointer, jthrowable throwable)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_SendTestNotificationListenerWrapper_NativeOnFailure(JNIEnv*, jobject, jlong pointer, jthrowable throwable)
     {
         auto obj = new AndroidJavaObject(throwable);
         obj->UpdateToGlobalRef();

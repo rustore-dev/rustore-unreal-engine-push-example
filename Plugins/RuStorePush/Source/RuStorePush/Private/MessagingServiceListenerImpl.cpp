@@ -36,7 +36,7 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
     for (int i = 0; i < size; i++)
     {
 		FString itemKey = jKeyArray->GetFStringArrayElement(i);
-		AndroidJavaClass* converter = new AndroidJavaClass("com/Plugins/RuStorePush/MessagingServiceListenerWrapper");
+		AndroidJavaClass* converter = new AndroidJavaClass("ru/rustore/unitysdk/pushclient/wrappers/MessagingServiceListenerWrapper");
 		FString itemVal = converter->CallStaticFString("GetValue", jData, itemKey);
 		response->data.Add(itemKey, itemVal);
 
@@ -126,13 +126,13 @@ void MessagingServiceListenerImpl::OnError(AndroidJavaObject* errorListObject)
 #if PLATFORM_ANDROID
 extern "C"
 {
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnNewToken(JNIEnv* env, jobject, jlong pointer, jstring result)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnNewToken(JNIEnv* env, jobject, jlong pointer, jstring result)
     {
         auto castobj = reinterpret_cast<MessagingServiceListenerImpl*>(pointer);
         castobj->OnNewToken(JavaTypeConverter::Convert(env, result));
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnMessageReceived(JNIEnv*, jobject, jlong pointer, jobject result)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnMessageReceived(JNIEnv*, jobject, jlong pointer, jobject result)
     {
         auto obj = new AndroidJavaObject(result);
         obj->UpdateToGlobalRef();
@@ -141,13 +141,13 @@ extern "C"
         castobj->OnMessageReceived(obj);
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnDeletedMessages(JNIEnv*, jobject, jlong pointer)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnDeletedMessages(JNIEnv*, jobject, jlong pointer)
     {
         auto castobj = reinterpret_cast<MessagingServiceListenerImpl*>(pointer);
         castobj->OnDeletedMessages();
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnError(JNIEnv*, jobject, jlong pointer, jobject errors)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnError(JNIEnv*, jobject, jlong pointer, jobject errors)
     {
         auto obj = new AndroidJavaObject(errors);
         obj->UpdateToGlobalRef();

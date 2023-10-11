@@ -11,7 +11,7 @@ DeleteTokenListenerImpl::~DeleteTokenListenerImpl()
 #if PLATFORM_ANDROID
 extern "C"
 {
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_DeleteTokenListenerWrapper_NativeOnFailure(JNIEnv*, jobject, jlong pointer, jthrowable throwable)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_DeleteTokenListenerWrapper_NativeOnFailure(JNIEnv*, jobject, jlong pointer, jthrowable throwable)
     {
         auto obj = new AndroidJavaObject(throwable);
         obj->UpdateToGlobalRef();
@@ -20,7 +20,7 @@ extern "C"
         castobj->OnFailure(obj);
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_DeleteTokenListenerWrapper_NativeOnSuccess(JNIEnv*, jobject, jlong pointer)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_DeleteTokenListenerWrapper_NativeOnSuccess(JNIEnv*, jobject, jlong pointer)
     {
         auto castobj = reinterpret_cast<DeleteTokenListenerImpl*>(pointer);
         castobj->OnSuccess();
