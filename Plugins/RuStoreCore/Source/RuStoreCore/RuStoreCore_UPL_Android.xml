@@ -11,11 +11,8 @@
   
   <gradleProperties>
     <insert>
-      android.enableSeparateAnnotationProcessing=true
-      android.enableBuildCache=false
       android.useAndroidX=true
       android.enableJetifier=true
-      android.enableR8=false
     </insert>
   </gradleProperties>
   
@@ -36,7 +33,6 @@
           buildTypes {
             all {
               minifyEnabled false
-              useProguard false
             }
           }
         }
