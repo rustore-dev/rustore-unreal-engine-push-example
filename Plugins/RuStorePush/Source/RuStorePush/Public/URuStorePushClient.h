@@ -10,6 +10,7 @@
 #include "FURuStoreError.h"
 #include "FURuStoreFeatureAvailabilityResult.h"
 #include "FURustoreTestNotificationPayload.h"
+#include "JavaApplication.h"
 #include "RuStoreListener.h"
 #include "URuStorePushClient.generated.h"
 
