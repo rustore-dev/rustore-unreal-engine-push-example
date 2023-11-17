@@ -58,14 +58,14 @@ AndroidJavaObject::AndroidJavaObject(jthrowable throwable)
 AndroidJavaObject::AndroidJavaObject(jobject javaObject)
 {
     env = FAndroidApplication::GetJavaEnv();
-    javaClass = env->GetObjectClass(javaObject);
+    javaClass = !env->IsSameObject(javaObject, nullptr) ? env->GetObjectClass(javaObject) : nullptr;
     this->javaObject = javaObject;
 }
 
 AndroidJavaObject::AndroidJavaObject(jobject javaObject, FString asInterface)
 {
     env = FAndroidApplication::GetJavaEnv();
-    javaClass = env->GetObjectClass(javaObject);
+    javaClass = !env->IsSameObject(javaObject, nullptr) ? env->GetObjectClass(javaObject) : nullptr;
     this->javaObject = javaObject;
     className = asInterface;
 }
