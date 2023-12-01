@@ -15,7 +15,7 @@ struct RUSTOREPUSH_API FURuStorePushClientConfig
 public:
 	FURuStorePushClientConfig()
 	{
-		allowNativeErrorHandling = false;
+		bAllowNativeErrorHandling = false;
 
 		messagingServiceListener = TScriptInterface<URuStoreMessagingServiceListenerInterface>();
 		logListener = TScriptInterface<URuStoreLogListenerInterface>();
@@ -23,7 +23,7 @@ public:
 	}
 
 	UPROPERTY(BlueprintReadWrite)
-	bool allowNativeErrorHandling;
+	bool bAllowNativeErrorHandling;
 
 	UPROPERTY(BlueprintReadWrite)
 	TScriptInterface<URuStoreMessagingServiceListenerInterface> messagingServiceListener;

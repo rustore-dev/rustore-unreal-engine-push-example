@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MessagingServiceListenerImpl.h"
+#include "AndroidJavaClass.h"
 #include "CallbackHandler.h"
-#include "URuStoreCore.h"
 
 using namespace RuStoreSDK;
 
@@ -20,59 +20,51 @@ void MessagingServiceListenerImpl::OnNewToken(FString token)
 void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* responseObject)
 {
     auto response = MakeShared<FURuStoreRemoteMessage, ESPMode::ThreadSafe>();
-    response->messageId = responseObject->GetFString("messageId");
-    response->priority = responseObject->GetInt("priority");
-    response->ttl = responseObject->GetInt("ttl");
-    response->collapseKey = responseObject->GetFString("collapseKey");
 
-    auto jData = responseObject->GetAJObject("data", "Ljava/util/Map;");
-    auto jDataSet = jData->CallSpecificAJObject("entrySet", "Ljava/util/Set;");
-    auto jDataArray = jDataSet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
-    auto size = jDataSet->CallInt("size");
+    response->messageId = responseObject->CallFString("getMessageId");
+    response->priority = responseObject->CallInt("getPriority");
+    response->ttl = responseObject->CallInt("getTtl");
+    response->collapseKey = responseObject->CallFString("getCollapseKey");
+
+    auto jData = responseObject->CallSpecificAJObject("getData", "Ljava/util/Map;");
+	jData->SetInterfaceName("java/util/Map");
+
+    auto jKeySet = jData->CallSpecificAJObject("keySet", "Ljava/util/Set;");
+    auto jKeyArray = jKeySet->CallSpecificAJObject("toArray", "[Ljava/lang/Object;");
+    auto size = jKeySet->CallInt("size");
 
     for (int i = 0; i < size; i++)
     {
-        auto p = jDataArray->GetAJObjectArrayElement(i);
-        if (p != nullptr)
-        {
-            auto itemKey = p->CallFString("getKey");
+		FString itemKey = jKeyArray->GetFStringArrayElement(i);
+		AndroidJavaClass* converter = new AndroidJavaClass("ru/rustore/unitysdk/pushclient/wrappers/MessagingServiceListenerWrapper");
+		FString itemVal = converter->CallStaticFString("GetValue", jData, itemKey);
+		response->data.Add(itemKey, itemVal);
 
-            auto itemVal = p->CallFString("getValue");
-            response->data.Add(itemKey, itemVal);
-
-            delete p;
-        }
+		delete converter;
     }
-    delete jDataArray;
-    delete jDataSet;
+    delete jKeyArray;
+    delete jKeySet;
     delete jData;
 
-    auto jRawData = responseObject->GetAJObject("rawData", "[B");
+	auto jRawData = responseObject->CallByteArray("getRawData");
     if (jRawData != nullptr)
     {
-        int byteArraySize = jRawData->CallInt("size");
+		response->rawData.Append(jRawData->GetData(), jRawData->Num());
 
-        for (int i = 0; i < byteArraySize; i++)
-        {
-            uint8 item = jRawData->CallByte("get", i);
-            response->rawData.Add(item);
-        }
         delete jRawData;
     }
 
-    URuStoreCore::LogWarn("rustore_debug", "Read notification");
-
-    auto jNotification = responseObject->GetAJObject("notification", "Lru/rustore/sdk/pushclient/messaging/model/Notification;");
+    auto jNotification = responseObject->CallSpecificAJObject("getNotification", "Lru/rustore/sdk/pushclient/messaging/model/Notification;");
     if (jNotification != nullptr)
     {
-        response->notification.title = jNotification->GetFString("title");
-        response->notification.body = jNotification->GetFString("body");
-        response->notification.channelId = jNotification->GetFString("channelId");
-        response->notification.color = jNotification->GetFString("color");
-        response->notification.icon = jNotification->GetFString("icon");
-        response->notification.clickAction = jNotification->GetFString("clickAction");
+        response->notification.title = jNotification->CallFString("getTitle");
+        response->notification.body = jNotification->CallFString("getBody");
+        response->notification.channelId = jNotification->CallFString("getChannelId");
+        response->notification.color = jNotification->CallFString("getColor");
+        response->notification.icon = jNotification->CallFString("getIcon");
+        response->notification.clickAction = jNotification->CallFString("getClickAction");
 
-        auto jImageUrl = jNotification->GetAJObject("imageUrl", "Landroid/net/Uri;");
+        AndroidJavaObject* jImageUrl = jNotification->CallSpecificAJObject("getImageUrl", "Landroid/net/Uri;");
         if (jImageUrl != nullptr)
         {
             response->notification.imageUrl = jImageUrl->CallFString("toString");
@@ -134,13 +126,13 @@ void MessagingServiceListenerImpl::OnError(AndroidJavaObject* errorListObject)
 #if PLATFORM_ANDROID
 extern "C"
 {
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnNewToken(JNIEnv* env, jobject, jlong pointer, jstring result)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnNewToken(JNIEnv* env, jobject, jlong pointer, jstring result)
     {
         auto castobj = reinterpret_cast<MessagingServiceListenerImpl*>(pointer);
         castobj->OnNewToken(JavaTypeConverter::Convert(env, result));
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnMessageReceived(JNIEnv*, jobject, jlong pointer, jobject result)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnMessageReceived(JNIEnv*, jobject, jlong pointer, jobject result)
     {
         auto obj = new AndroidJavaObject(result);
         obj->UpdateToGlobalRef();
@@ -149,13 +141,13 @@ extern "C"
         castobj->OnMessageReceived(obj);
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnDeletedMessages(JNIEnv*, jobject, jlong pointer)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnDeletedMessages(JNIEnv*, jobject, jlong pointer)
     {
         auto castobj = reinterpret_cast<MessagingServiceListenerImpl*>(pointer);
         castobj->OnDeletedMessages();
     }
 
-    JNIEXPORT void JNICALL Java_com_Plugins_RuStorePush_MessagingServiceListenerWrapper_NativeOnError(JNIEnv*, jobject, jlong pointer, jobject errors)
+    JNIEXPORT void JNICALL Java_ru_rustore_unitysdk_pushclient_wrappers_MessagingServiceListenerWrapper_NativeOnError(JNIEnv*, jobject, jlong pointer, jobject errors)
     {
         auto obj = new AndroidJavaObject(errors);
         obj->UpdateToGlobalRef();

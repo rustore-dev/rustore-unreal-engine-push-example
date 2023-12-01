@@ -23,7 +23,7 @@ namespace RuStoreSDK
             TFunction<void(long, TSharedPtr<FURuStoreRemoteMessage, ESPMode::ThreadSafe>)> onMessageReceived,
             TFunction<void(long)> onDeletedMessages,
             TFunction<void(long, TSharedPtr<TArray<FURuStoreError>, ESPMode::ThreadSafe>)> onError
-        ) : RuStoreListener("com/Plugins/RuStorePush/MessagingServiceListenerWrapper", "ru/rustore/unitysdk/pushclient/RuStoreUnityMessagingServiceListener")
+        ) : RuStoreListener("ru/rustore/unitysdk/pushclient/wrappers/MessagingServiceListenerWrapper", "ru/rustore/unitysdk/pushclient/RuStoreUnityMessagingServiceListener")
         {
             _onNewToken = onNewToken;
             _onMessageReceived = onMessageReceived;

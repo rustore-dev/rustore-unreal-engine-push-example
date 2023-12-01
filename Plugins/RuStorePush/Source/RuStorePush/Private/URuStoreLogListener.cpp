@@ -7,7 +7,7 @@
 URuStoreLogListener* URuStoreLogListener::_instance = nullptr;
 bool URuStoreLogListener::_bIsInstanceInitialized = false;
 
-bool URuStoreLogListener::getIsInitialized()
+bool URuStoreLogListener::GetIsInitialized()
 {
     return bIsInitialized;
 }

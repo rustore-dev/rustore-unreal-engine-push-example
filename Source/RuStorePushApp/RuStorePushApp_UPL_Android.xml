@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <resourceCopies>
+    <copyFile src="$S(PluginDir)/projectid.xml" dst="$S(BuildDir)/res/values/projectid.xml" />
+  </resourceCopies>
+
+  <androidManifestUpdates>
+    <loopElements tag="activity">
+      <addAttribute tag="$" name="android:exported" value="true" />
+    </loopElements>
+  </androidManifestUpdates>
+
+  <androidManifestUpdates>
+    <addElements tag="application">
+      <meta-data
+        android:name="ru.rustore.sdk.pushclient.default_notification_color"
+        android:value="#FFFF0000" />
+    </addElements>
+  </androidManifestUpdates>
+
+</root>
