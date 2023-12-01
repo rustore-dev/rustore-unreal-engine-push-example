@@ -1,6 +1,6 @@
 ## RuStore Unreal Engine плагин для подключения пуш-уведомлений
 
-### [🔗 Документация разработчика](https://gitflic.ru/project/rustore/rustore-unreal-engine-push-example)
+### [🔗 Документация разработчика](https://help.rustore.ru/rustore/for_developers/developer-documentation/sdk_push-notifications)
 
 Плагин RuStorePush предоставляет функциональность для включения в приложение push-уведомлений через сервисы RuStore.
 
