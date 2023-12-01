@@ -14,7 +14,7 @@ namespace RuStoreSDK
             TFunction<void(long)> onSuccess,
             TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onFailure,
             TFunction<void(RuStoreListener*)> onFinish
-        ) : SimpleResponseListener("com/Plugins/RuStorePush/DeleteTokenListenerWrapper", "ru/rustore/unitysdk/pushclient/callbacks/DeleteTokenListener", onSuccess, onFailure, onFinish)
+        ) : SimpleResponseListener("ru/rustore/unitysdk/pushclient/wrappers/DeleteTokenListenerWrapper", "ru/rustore/unitysdk/pushclient/callbacks/DeleteTokenListener", onSuccess, onFailure, onFinish)
         {
         }
 

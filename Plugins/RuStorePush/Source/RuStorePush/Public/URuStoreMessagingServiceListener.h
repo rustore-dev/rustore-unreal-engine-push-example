@@ -33,7 +33,7 @@ private:
 
 public:
     UFUNCTION(BlueprintCallable, Category = "RuStore Messaging Service Listener")
-    bool getIsInitialized();
+    bool GetIsInitialized();
 
     UFUNCTION(BlueprintCallable, Category = "RuStore Messaging Service Listener")
     static URuStoreMessagingServiceListener* Instance();

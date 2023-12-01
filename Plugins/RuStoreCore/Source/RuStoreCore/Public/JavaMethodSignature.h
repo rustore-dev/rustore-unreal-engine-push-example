@@ -3,25 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AndroidJavaObject.h"
-#include "JavaActivity.h"
-#include "JavaApplication.h"
+#include "IAndroidClasses.h"
 
 namespace RuStoreSDK
 {
-    class AndroidJavaObject;
-    class JavaActivity;
-    class JavaApplication;
-
     class RUSTORECORE_API JavaMethodSignature
     {
     public:
         template <typename T>
-        static FString getName(T);
-        static FString getName(IAndroidClasses* obj);
-        static FString getName(AndroidJavaObject* obj);
-        static FString getName(JavaActivity* obj);
-        static FString getName(JavaApplication* obj);
+        static FString getName(T)
+        {
+            return TEXT("");
+        }
+
+        template <typename T>
+        static FString getName(T* obj)
+        {
+            return FString::Printf(TEXT("L%s;"), *(((IAndroidClasses*)obj)->GetName()));
+        }
+
         static FString getName(void);
         static FString getName(bool);
         static FString getName(unsigned char);
@@ -33,6 +33,8 @@ namespace RuStoreSDK
         static FString getName(double);
         static FString getName(FString&);
         static FString getName(TArray<FString>&);
+        static FString getName(TArray<uint8>&);
+        static FString getName(TArray<uint8>*);
 
         template <typename... Args>
         static FString Constuct(Args... args)
@@ -53,6 +55,12 @@ namespace RuStoreSDK
         }
 
         template <typename... Args>
+        static FString MakeBool(Args... args)
+        {
+            return Constuct(getName(args)...) + "Z";
+        }
+
+        template <typename... Args>
         static FString MakeByte(Args... args)
         {
             return Constuct(getName(args)...) + "B";
@@ -68,6 +76,18 @@ namespace RuStoreSDK
         static FString MakeLong(Args... args)
         {
             return Constuct(getName(args)...) + "J";
+        }
+
+        template <typename... Args>
+        static FString MakeFloat(Args... args)
+        {
+            return Constuct(getName(args)...) + "F";
+        }
+
+        template <typename... Args>
+        static FString MakeDouble(Args... args)
+        {
+            return Constuct(getName(args)...) + "D";
         }
 
         template <typename... Args>
@@ -92,6 +112,12 @@ namespace RuStoreSDK
         static FString MakeSpecificAJObject(FString signature, Args... args)
         {
             return Constuct(getName(args)...) + signature;
+        }
+
+        template <typename... Args>
+        static FString MakeByteArray(Args... args)
+        {
+            return Constuct(getName(args)...) + "[B";
         }
     };
 }

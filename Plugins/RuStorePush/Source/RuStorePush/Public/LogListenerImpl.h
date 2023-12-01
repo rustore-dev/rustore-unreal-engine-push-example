@@ -23,7 +23,7 @@ namespace RuStoreSDK
             TFunction<void(long, FString)> onLogWarning,
             TFunction<void(long, FString)> onLogError,
             TFunction<void(long, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe>)> onLogException
-        ) : RuStoreListener("com/Plugins/RuStorePush/LogListenerWrapper", "ru/rustore/unitysdk/pushclient/callbacks/UnityLogListener")
+        ) : RuStoreListener("ru/rustore/unitysdk/pushclient/wrappers/LogListenerWrapper", "ru/rustore/unitysdk/pushclient/callbacks/UnityLogListener")
         {
             _onLog = onLog;
             _onLogWarning = onLogWarning;
