@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EURuStoreClientIdType.h"
 #include "URuStoreMessagingServiceListenerInterface.h"
 #include "URuStoreLogListenerInterface.h"
 #include "FURuStorePushClientConfig.generated.h"
@@ -20,6 +21,8 @@ public:
 		messagingServiceListener = TScriptInterface<URuStoreMessagingServiceListenerInterface>();
 		logListener = TScriptInterface<URuStoreLogListenerInterface>();
 		projectId = "";
+		clientIdType = EURuStoreClientIdType::NONE;
+		clientIdValue = "";
 	}
 
 	UPROPERTY(BlueprintReadWrite)
@@ -33,4 +36,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FString projectId;
+
+	UPROPERTY(BlueprintReadWrite)
+	EURuStoreClientIdType clientIdType;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString clientIdValue;
 };
