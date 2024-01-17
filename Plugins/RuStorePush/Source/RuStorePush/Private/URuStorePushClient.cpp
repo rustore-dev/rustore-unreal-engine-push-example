@@ -12,7 +12,7 @@
 
 using namespace RuStoreSDK;
 
-const FString URuStorePushClient::PluginVersion = "1.0";
+const FString URuStorePushClient::PluginVersion = "1.1";
 URuStorePushClient* URuStorePushClient::_instance = nullptr;
 bool URuStorePushClient::_bIsInstanceInitialized = false;
 
@@ -50,10 +50,8 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
 
     URuStoreCore::Instance()->Init();
 
-    _application = new JavaApplication();
-
     auto clientJavaClass = MakeShared<AndroidJavaClass>("ru/rustore/unitysdk/pushclient/RuStoreUnityPushClient");
-    clientJavaClass->CallStaticVoid("init", _application, config.projectId, FString("unreal"));
+    clientJavaClass->CallStaticVoid("init", config.projectId, FString("unreal"), StaticEnum<EURuStoreClientIdType>()->GetNameStringByValue((int)config.clientIdType), config.clientIdValue);
     _clientWrapper = clientJavaClass->GetStaticAJObject("INSTANCE");
 
     AndroidJavaObject jMessagingServiceListenerNULL("ru/rustore/unitysdk/pushclient/RuStoreUnityMessagingServiceListener", 0, false);
