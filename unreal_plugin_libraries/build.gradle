@@ -1,9 +1,9 @@
 ext {
     rustore_core_version = '1.0.0'
-    //rustore_pushclient_version = '1.+'
-    //rustore_sdk_type = ''
-    rustore_pushclient_version = '1.2.0'
-    rustore_sdk_type = '-QA'
+    rustore_pushclient_version = '1.+'
+    rustore_sdk_type = ''
+    //rustore_pushclient_version = '1.2.0'
+    //rustore_sdk_type = '-QA'
     sdk_version_code = 1
 }
 buildscript {
