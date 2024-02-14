@@ -23,14 +23,17 @@ class RUSTOREPUSH_API IRuStoreLogListenerInterface
 
 public:
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "RuStore Log Listener Interface")
-    void LogResponse(int64 requestId, FString& logString);
+    void LogVerboseResponse(int64 requestId, FString& message, FURuStoreError& error);
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "RuStore Log Listener Interface")
-    void LogWarningResponse(int64 requestId, FString& logString);
+    void LogDebugResponse(int64 requestId, FString& message, FURuStoreError& error);
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "RuStore Log Listener Interface")
-    void LogErrorResponse(int64 requestId, FString& logString);
+    void LogInfoResponse(int64 requestId, FString& message, FURuStoreError& error);
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "RuStore Log Listener Interface")
-    void LogExceptionResponse(int64 requestId, FURuStoreError& error);
+    void LogWarnResponse(int64 requestId, FString& message, FURuStoreError& error);
+
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "RuStore Log Listener Interface")
+    void LogErrorResponse(int64 requestId, FString& message, FURuStoreError& error);
 };
