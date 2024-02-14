@@ -12,7 +12,7 @@
 
 using namespace RuStoreSDK;
 
-const FString URuStorePushClient::PluginVersion = "1.1";
+const FString URuStorePushClient::PluginVersion = "1.4";
 URuStorePushClient* URuStorePushClient::_instance = nullptr;
 bool URuStorePushClient::_bIsInstanceInitialized = false;
 
@@ -50,12 +50,11 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
 
     URuStoreCore::Instance()->Init();
 
-    auto clientJavaClass = MakeShared<AndroidJavaClass>("ru/rustore/unitysdk/pushclient/RuStoreUnityPushClient");
-    clientJavaClass->CallStaticVoid("init", config.projectId, FString("unreal"), StaticEnum<EURuStoreClientIdType>()->GetNameStringByValue((int)config.clientIdType), config.clientIdValue);
+    auto clientJavaClass = MakeShared<AndroidJavaClass>("ru/rustore/unreal/pushclient/RuStoreUnrealPushClient");
     _clientWrapper = clientJavaClass->GetStaticAJObject("INSTANCE");
 
     AndroidJavaObject jMessagingServiceListenerNULL("ru/rustore/unitysdk/pushclient/RuStoreUnityMessagingServiceListener", 0, false);
-    AndroidJavaObject jLogListenerNULL("ru/rustore/unitysdk/pushclient/callbacks/UnityLogListener", 0, false);
+    AndroidJavaObject jLogListenerNULL("ru/rustore/unreal/pushclient/callbacks/UnrealLogListener", 0, false);
 
     auto messagingServiceListener = (config.messagingServiceListener != nullptr)
         ? Cast<URuStoreMessagingServiceListener>(config.messagingServiceListener.GetObject())

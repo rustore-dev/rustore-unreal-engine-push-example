@@ -12,10 +12,11 @@
 #include "URuStoreLogListenerInterface.h"
 #include "URuStoreLogListener.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLogListenerOnLogDelegate, int64, requestId, FString, logString);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLogListenerOnLogWarningDelegate, int64, requestId, FString, logString);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLogListenerOnLogErrorDelegate, int64, requestId, FString, logString);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLogListenerOnLogExceptionDelegate, int64, requestId, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLogListenerOnLogVerboseDelegate, int64, requestId, FString, message, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLogListenerOnLogDebugDelegate, int64, requestId, FString, message, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLogListenerOnLogInfoDelegate, int64, requestId, FString, message, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLogListenerOnLogWarningDelegate, int64, requestId, FString, message, FURuStoreError, error);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FLogListenerOnLogErrorDelegate, int64, requestId, FString, message, FURuStoreError, error);
 
 using namespace RuStoreSDK;
 
@@ -61,22 +62,26 @@ public:
 
     void ConditionalBeginDestroy();
 
-    virtual void LogResponse_Implementation(int64 requestId, FString& logString) override;
-    virtual void LogWarningResponse_Implementation(int64 requestId, FString& logString) override;
-    virtual void LogErrorResponse_Implementation(int64 requestId, FString& logString) override;
-    virtual void LogExceptionResponse_Implementation(int64 requestId, FURuStoreError& error) override;
-    
+    virtual void LogVerboseResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error);
+    virtual void LogDebugResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error);
+    virtual void LogInfoResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error);
+    virtual void LogWarningResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error);
+    virtual void LogErrorResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error);
+
     UPROPERTY(BlueprintAssignable, Category = "RuStore Log Listener")
-    FLogListenerOnLogDelegate OnLog;
+    FLogListenerOnLogVerboseDelegate OnLogVerbose;
+
+    UPROPERTY(BlueprintAssignable, Category = "RuStore Log Listener")
+    FLogListenerOnLogDebugDelegate OnLogDebug;
+
+    UPROPERTY(BlueprintAssignable, Category = "RuStore Log Listener")
+    FLogListenerOnLogInfoDelegate OnLogInfo;
 
     UPROPERTY(BlueprintAssignable, Category = "RuStore Log Listener")
     FLogListenerOnLogWarningDelegate OnLogWarning;
 
     UPROPERTY(BlueprintAssignable, Category = "RuStore Log Listener")
     FLogListenerOnLogErrorDelegate OnLogError;
-
-    UPROPERTY(BlueprintAssignable, Category = "RuStore Log Listener")
-    FLogListenerOnLogExceptionDelegate OnLogException;
 
     AndroidJavaObject* GetJWrapper();
 };
