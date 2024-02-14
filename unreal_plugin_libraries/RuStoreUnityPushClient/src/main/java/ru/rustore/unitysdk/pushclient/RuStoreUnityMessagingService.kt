@@ -1,24 +1,25 @@
 package ru.rustore.unitysdk.pushclient
 
-import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException
+import ru.rustore.sdk.pushclient.messaging.exception.PushClientException
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage
 import ru.rustore.sdk.pushclient.messaging.service.RuStoreMessagingService
+import ru.rustore.unreal.pushclient.RuStoreUnrealPushClient
 
 class RuStoreUnityMessagingService : RuStoreMessagingService() {
 
     override fun onNewToken(token: String) {
-        RuStoreUnityPushClient.onNewToken(token)
+        RuStoreUnrealPushClient.onNewToken(token)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        RuStoreUnityPushClient.onMessageReceived(message)
+        RuStoreUnrealPushClient.onMessageReceived(message)
     }
 
     override fun onDeletedMessages() {
-        RuStoreUnityPushClient.onDeletedMessages()
+        RuStoreUnrealPushClient.onDeletedMessages()
     }
 
-    override fun onError(errors: List<RuStorePushClientException>) {
-        RuStoreUnityPushClient.onError(errors)
+    override fun onError(errors: List<PushClientException>) {
+        RuStoreUnrealPushClient.onError(errors)
     }
 }

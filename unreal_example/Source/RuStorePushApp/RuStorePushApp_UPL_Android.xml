@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <resourceCopies>
-    <copyFile src="$S(PluginDir)/projectid.xml" dst="$S(BuildDir)/res/values/projectid.xml" />
-  </resourceCopies>
+  <prebuildCopies>
+    <copyDir src="$S(PluginDir)/Java" dst="$S(BuildDir)/src/com/Plugins/RuStorePush" />
+  </prebuildCopies>
 
   <androidManifestUpdates>
     <loopElements tag="activity">
@@ -12,6 +12,7 @@
   </androidManifestUpdates>
 
   <androidManifestUpdates>
+    <addAttribute tag="application" name="android:name" value="com.example.RuStorePushApp.RuStorePushApplication" />
     <addElements tag="application">
       <meta-data
         android:name="ru.rustore.sdk.pushclient.default_notification_color"

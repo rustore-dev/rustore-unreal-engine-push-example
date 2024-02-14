@@ -1,4 +1,4 @@
-package ru.rustore.unitysdk.pushclient
+package ru.rustore.unreal.pushclient
 
 import android.app.Application
 import com.vk.push.common.clientid.ClientId
@@ -7,27 +7,31 @@ import ru.rustore.sdk.core.exception.RuStoreException
 import ru.rustore.sdk.core.feature.model.FeatureAvailabilityResult
 import ru.rustore.sdk.core.tasks.OnCompleteListener
 import ru.rustore.sdk.pushclient.RuStorePushClient
-import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException
+import ru.rustore.sdk.pushclient.messaging.exception.PushClientException
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage
 import ru.rustore.sdk.pushclient.messaging.model.TestNotificationPayload
 import ru.rustore.sdk.pushclient.utils.resolveForPush
 import ru.rustore.unitysdk.core.PlayerProvider
 import ru.rustore.unitysdk.core.callbacks.FeatureAvailabilityListener
+import ru.rustore.unitysdk.pushclient.EnumConverter
+import ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingServiceListener
 import ru.rustore.unitysdk.pushclient.callbacks.DeleteTokenListener
 import ru.rustore.unitysdk.pushclient.callbacks.GetTokenListener
 import ru.rustore.unitysdk.pushclient.callbacks.SendTestNotificationListener
 import ru.rustore.unitysdk.pushclient.callbacks.SubscribeTopicListener
-import ru.rustore.unitysdk.pushclient.callbacks.UnityLogListener
+import ru.rustore.unreal.pushclient.callbacks.UnrealLogListener
 
-object RuStoreUnityPushClient : UnityLogListener  {
+object RuStoreUnrealPushClient : UnrealLogListener {
+
+	private val METRIC_TYPE = "unreal"
 
 	private var allowErrorHandling: Boolean = false
 	private var serviceListener: RuStoreUnityMessagingServiceListener? = null
 
 	private var messages: MutableList<RemoteMessage> = ArrayList()
-	private var errors: MutableList<RuStorePushClientException> = ArrayList()
+	private var errors: MutableList<PushClientException> = ArrayList()
 
-	private var logListener: UnityLogListener? = null
+	private var logListener: UnrealLogListener? = null
 
 	private var isTestModeEnabled = false
 
@@ -48,11 +52,10 @@ object RuStoreUnityPushClient : UnityLogListener  {
 		this.serviceListener = listener
 	}
 
-	fun init(allowNativeErrorHandling: Boolean, serviceListener: RuStoreUnityMessagingServiceListener?, logListener: UnityLogListener?) {
+	fun init(allowNativeErrorHandling: Boolean, serviceListener: RuStoreUnityMessagingServiceListener?, logListener: UnrealLogListener?) {
 		this.allowErrorHandling = allowNativeErrorHandling
 
 		this.serviceListener = serviceListener
-		this.logListener = logListener
 
 		if (messages.isNotEmpty()) {
 			messages.forEach {
@@ -65,6 +68,9 @@ object RuStoreUnityPushClient : UnityLogListener  {
 			serviceListener?.OnError(errors)
 			errors.clear()
 		}
+
+		this.logListener = logListener
+		RuStoreUnrealLogger.setExternLogger(this)
 	}
 
 	fun checkPushAvailability(listener: FeatureAvailabilityListener) {
@@ -163,7 +169,7 @@ object RuStoreUnityPushClient : UnityLogListener  {
 		serviceListener?.OnDeletedMessages()
 	}
 
-	fun onError(errors: List<RuStorePushClientException>) {
+	fun onError(errors: List<PushClientException>) {
 		if (serviceListener == null){
 			this.errors.addAll(errors)
 		}
@@ -171,28 +177,28 @@ object RuStoreUnityPushClient : UnityLogListener  {
 	}
 
 	@JvmStatic
-	fun init(projectId: String, metricType: String, clientIdType: String?, clientIdValue: String?) {
+	fun init(application: Application, projectId: String, clientIdType: UnrealClientIdType?, clientIdValue: String?) {
 		val clientIdCallback = clientIdType?.let {
-			ClientIdCallback {
-				EnumConverter.getClientIdTypeFromString(clientIdType)?.let { type ->
-					ClientId(
-						clientIdType = type,
-						clientIdValue = clientIdValue.orEmpty()
-					)
+			clientIdValue?.let {
+				ClientIdCallback {
+					EnumConverter.convert(clientIdType)?.let { type ->
+						ClientId(
+							clientIdType = type,
+							clientIdValue = clientIdValue
+						)
+					}
 				}
 			}
 		}
 
-		PlayerProvider.getCurrentActivity()?.run {
-			RuStorePushClient.init(
-				application = application,
-				projectId = projectId,
-				internalConfig = mapOf("type" to metricType),
-				logger = UnityLogger(this.javaClass.simpleName),
-				testModeEnabled = isTestModeEnabled,
-				clientIdCallback = clientIdCallback
-			)
-		}
+		RuStorePushClient.init(
+			application = application,
+			projectId = projectId,
+			internalConfig = mapOf("type" to METRIC_TYPE),
+			logger = RuStoreUnrealLogger,
+			testModeEnabled = isTestModeEnabled,
+			clientIdCallback = clientIdCallback
+		)
 	}
 
 	private fun handleError(throwable: Throwable) {
@@ -203,19 +209,23 @@ object RuStoreUnityPushClient : UnityLogListener  {
 		}
 	}
 
-	override fun Log(logString: String?) {
-		logListener?.Log(logString)
+	override fun verbose(message: String?, throwable: Throwable?) {
+		logListener?.verbose(message, throwable)
 	}
 
-	override fun LogWarning(logString: String?) {
-		logListener?.LogWarning(logString)
+	override fun debug(message: String?, throwable: Throwable?) {
+		logListener?.debug(message, throwable)
 	}
 
-	override fun LogError(logString: String?) {
-		logListener?.LogError(logString)
+	override fun info(message: String?, throwable: Throwable?) {
+		logListener?.info(message, throwable)
 	}
 
-	override fun LogException(throwable: Throwable?) {
-		logListener?.LogException(throwable)
+	override fun warn(message: String?, throwable: Throwable?) {
+		logListener?.warn(message, throwable)
+	}
+
+	override fun error(message: String?, throwable: Throwable?) {
+		logListener?.error(message, throwable)
 	}
 }
