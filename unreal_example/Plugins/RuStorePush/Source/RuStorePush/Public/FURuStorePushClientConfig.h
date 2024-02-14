@@ -17,12 +17,8 @@ public:
 	FURuStorePushClientConfig()
 	{
 		bAllowNativeErrorHandling = false;
-
 		messagingServiceListener = TScriptInterface<URuStoreMessagingServiceListenerInterface>();
 		logListener = TScriptInterface<URuStoreLogListenerInterface>();
-		projectId = "";
-		clientIdType = EURuStoreClientIdType::NONE;
-		clientIdValue = "";
 	}
 
 	UPROPERTY(BlueprintReadWrite)
@@ -33,13 +29,4 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	TScriptInterface<URuStoreLogListenerInterface> logListener;
-
-	UPROPERTY(BlueprintReadWrite)
-	FString projectId;
-
-	UPROPERTY(BlueprintReadWrite)
-	EURuStoreClientIdType clientIdType;
-
-	UPROPERTY(BlueprintReadWrite)
-	FString clientIdValue;
 };

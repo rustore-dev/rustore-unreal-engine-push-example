@@ -31,17 +31,20 @@ bool URuStoreLogListener::Init()
     _instance->AddToRoot();
 
     listener = ListenerBind(new LogListenerImpl(
-        [this](long requestId, FString logString) {
-            LogResponse_Implementation(requestId, logString);
+        [this](long requestId, FString message, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            LogVerboseResponse_Implementation(requestId, message, *error);
         },
-        [this](long requestId, FString logString) {
-            LogWarningResponse_Implementation(requestId, logString);
+        [this](long requestId, FString message, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            LogDebugResponse_Implementation(requestId, message, *error);
         },
-        [this](long requestId, FString logString) {
-            LogErrorResponse_Implementation(requestId, logString);
+        [this](long requestId, FString message, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            LogInfoResponse_Implementation(requestId, message, *error);
         },
-        [this](long requestId, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
-            LogExceptionResponse_Implementation(requestId, *error);
+        [this](long requestId, FString message, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            LogWarningResponse_Implementation(requestId, message, *error);
+        },
+        [this](long requestId, FString message, TSharedPtr<FURuStoreError, ESPMode::ThreadSafe> error) {
+            LogErrorResponse_Implementation(requestId, message, *error);
         }
     ));
 
@@ -66,24 +69,29 @@ void URuStoreLogListener::ConditionalBeginDestroy()
     if (_bIsInstanceInitialized) _bIsInstanceInitialized = false;
 }
 
-void URuStoreLogListener::LogResponse_Implementation(int64 requestId, FString& logString)
+void URuStoreLogListener::LogVerboseResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error)
 {
-    OnLog.Broadcast(requestId, logString);
+    OnLogVerbose.Broadcast(requestId, message, error);
 }
 
-void URuStoreLogListener::LogWarningResponse_Implementation(int64 requestId, FString& logString)
+void URuStoreLogListener::LogDebugResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error)
 {
-    OnLogWarning.Broadcast(requestId, logString);
+    OnLogDebug.Broadcast(requestId, message, error);
 }
 
-void URuStoreLogListener::LogErrorResponse_Implementation(int64 requestId, FString& logString)
+void URuStoreLogListener::LogInfoResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error)
 {
-    OnLogError.Broadcast(requestId, logString);
+    OnLogInfo.Broadcast(requestId, message, error);
 }
 
-void URuStoreLogListener::LogExceptionResponse_Implementation(int64 requestId, FURuStoreError& error)
+void URuStoreLogListener::LogWarningResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error)
 {
-    OnLogException.Broadcast(requestId, error);
+    OnLogWarning.Broadcast(requestId, message, error);
+}
+
+void URuStoreLogListener::LogErrorResponse_Implementation(int64 requestId, FString& message, FURuStoreError& error)
+{
+    OnLogError.Broadcast(requestId, message, error);
 }
 
 AndroidJavaObject* URuStoreLogListener::GetJWrapper()
