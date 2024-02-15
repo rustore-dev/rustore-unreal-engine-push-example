@@ -4,6 +4,7 @@ package com.example.RuStorePushApp;
 
 import android.util.Log;
 import com.epicgames.ue4.GameApplication;
+import ru.rustore.unreal.pushclient.RuStoreUnrealLoggerMode;
 import ru.rustore.unreal.pushclient.RuStoreUnrealPushClient;
 import ru.rustore.unreal.pushclient.UnrealClientIdType;
 
@@ -19,6 +20,7 @@ public class RuStorePushApplication extends GameApplication {
 		RuStoreUnrealPushClient.INSTANCE.init(
             this,
             PROJECT_ID,
+			RuStoreUnrealLoggerMode.CUSTOM,
 			null,
 			null
         );
