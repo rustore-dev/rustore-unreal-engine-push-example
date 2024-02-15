@@ -7,6 +7,8 @@ import ru.rustore.sdk.core.exception.RuStoreException
 import ru.rustore.sdk.core.feature.model.FeatureAvailabilityResult
 import ru.rustore.sdk.core.tasks.OnCompleteListener
 import ru.rustore.sdk.pushclient.RuStorePushClient
+import ru.rustore.sdk.pushclient.common.logger.DefaultLogger
+import ru.rustore.sdk.pushclient.common.logger.Logger
 import ru.rustore.sdk.pushclient.messaging.exception.PushClientException
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage
 import ru.rustore.sdk.pushclient.messaging.model.TestNotificationPayload
@@ -177,7 +179,7 @@ object RuStoreUnrealPushClient : UnrealLogListener {
 	}
 
 	@JvmStatic
-	fun init(application: Application, projectId: String, clientIdType: UnrealClientIdType?, clientIdValue: String?) {
+	fun init(application: Application, projectId: String, loggerMode: RuStoreUnrealLoggerMode?, clientIdType: UnrealClientIdType?, clientIdValue: String?) {
 		val clientIdCallback = clientIdType?.let {
 			clientIdValue?.let {
 				ClientIdCallback {
@@ -191,11 +193,17 @@ object RuStoreUnrealPushClient : UnrealLogListener {
 			}
 		}
 
+		val logger: Logger = when(loggerMode) {
+			RuStoreUnrealLoggerMode.LOGCAT -> DefaultLogger()
+			RuStoreUnrealLoggerMode.CUSTOM -> RuStoreUnrealLogger
+			else -> DefaultLogger()
+		}
+
 		RuStorePushClient.init(
 			application = application,
 			projectId = projectId,
 			internalConfig = mapOf("type" to METRIC_TYPE),
-			logger = RuStoreUnrealLogger,
+			logger = logger,
 			testModeEnabled = isTestModeEnabled,
 			clientIdCallback = clientIdCallback
 		)
