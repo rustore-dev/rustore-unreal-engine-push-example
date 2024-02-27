@@ -1,6 +1,6 @@
 ## История изменений
 
-### Release 1.4.0
+### Release 1.4
 - Версия SDK push 1.+
 
 ### Release 1.2.0
