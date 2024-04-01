@@ -2,7 +2,7 @@ package ru.rustore.unitysdk.pushclient.wrappers;
 
 import java.util.List;
 import java.util.Map;
-import ru.rustore.sdk.pushclient.messaging.exception.PushClientException;
+import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException;
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage;
 import ru.rustore.unitysdk.core.IRuStoreListener;
 import ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingServiceListener;
@@ -17,7 +17,7 @@ public class MessagingServiceListenerWrapper implements IRuStoreListener, RuStor
     private native void NativeOnNewToken(long pointer, String token);
     private native void NativeOnMessageReceived(long pointer, RemoteMessage message2);
     private native void NativeOnDeletedMessages(long pointer);
-    private native void NativeOnError(long pointer, List<PushClientException> errors);
+    private native void NativeOnError(long pointer, List<RuStorePushClientException> errors);
 
     public static String GetValue(Map<String, String> data, String key) {
         return data.get(key);
@@ -60,7 +60,7 @@ public class MessagingServiceListenerWrapper implements IRuStoreListener, RuStor
     }
 
     @Override
-    public void OnError(List<PushClientException> errors) {
+    public void OnError(List<RuStorePushClientException> errors) {
         synchronized (mutex) {
             if (cppPointer != 0) {
                 NativeOnError(cppPointer, errors);
