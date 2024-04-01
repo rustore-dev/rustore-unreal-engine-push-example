@@ -1,11 +1,11 @@
 ext {
     rustore_core_version = '1.0.0'
-    rustore_pushclient_version = '1.+'
+    rustore_pushclient_version = '2.+'
     rustore_sdk_type = ''
-    //rustore_pushclient_version = '1.4.0'
+    //rustore_pushclient_version = '2.0.0'
     //rustore_sdk_type = '-QA'
     sdk_version_code = 1
-    rustore_qa_dir = "${rootProject.projectDir}/../QA"
+    rustore_qa_dir = "${rootProject.projectDir}/../../QA"
 }
 buildscript {
     ext.kotlin_version = "1.7.10"
