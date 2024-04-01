@@ -48,10 +48,6 @@
           url uri("src/main/libs")
         }
       }
-        
-      if (project.hasProperty('rustore_sdk_type')) {
-        core_type = rustore_sdk_type
-      }
       
       dependencies {
         implementation fileTree(include: ["RuStoreUnityCore${core_type}.aar"], dir: 'src/main/libs')
