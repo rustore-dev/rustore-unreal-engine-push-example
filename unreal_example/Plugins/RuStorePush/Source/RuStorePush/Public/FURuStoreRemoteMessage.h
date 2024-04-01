@@ -18,6 +18,7 @@ public:
 		messageId = "";
 		priority = 0;
 		ttl = 0;
+		from = "";
 	}
 
 	UPROPERTY(BlueprintReadOnly)
@@ -28,6 +29,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	int ttl;
+
+	UPROPERTY(BlueprintReadOnly)
+	FString from;
 
 	UPROPERTY(BlueprintReadOnly)
 	FString collapseKey;
