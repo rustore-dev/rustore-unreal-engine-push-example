@@ -24,6 +24,7 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
     response->messageId = responseObject->CallFString("getMessageId");
     response->priority = responseObject->CallInt("getPriority");
     response->ttl = responseObject->CallInt("getTtl");
+    response->from = responseObject->CallFString("getFrom");
     response->collapseKey = responseObject->CallFString("getCollapseKey");
 
     auto jData = responseObject->CallSpecificAJObject("getData", "Ljava/util/Map;");

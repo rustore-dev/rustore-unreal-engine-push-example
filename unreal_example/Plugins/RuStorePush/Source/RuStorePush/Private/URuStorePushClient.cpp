@@ -72,7 +72,7 @@ bool URuStorePushClient::Init(FURuStorePushClientConfig config)
         ? logListener->GetJWrapper()
         : &jLogListenerNULL;
 
-    _clientWrapper->CallVoid("init", config.bAllowNativeErrorHandling, jMessagingServiceListener, jLogListener);
+    _clientWrapper->CallVoid("initListeners", config.bAllowNativeErrorHandling, jMessagingServiceListener, jLogListener);
 	
     return bIsInitialized = true;
 }
