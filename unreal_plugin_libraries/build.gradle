@@ -2,8 +2,6 @@ ext {
     rustore_core_version = '1.0.0'
     rustore_pushclient_version = '2.+'
     rustore_sdk_type = ''
-    //rustore_pushclient_version = '2.0.0'
-    //rustore_sdk_type = '-QA'
     sdk_version_code = 1
     rustore_qa_dir = "${rootProject.projectDir}/../../QA"
 }
@@ -11,7 +9,7 @@ buildscript {
     ext.kotlin_version = "1.7.10"
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.1'
@@ -25,7 +23,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven {
             url = uri("https://artifactory-external.vkpartner.ru/artifactory/maven")
         }
