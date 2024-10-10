@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EURuStoreClickActionType.h"
 #include "FURuStoreNotification.generated.h"
 
 USTRUCT(Blueprintable)
@@ -20,6 +21,7 @@ public:
 		color = "";
 		icon = "";
 		clickAction = "";
+		clickActionType = EURuStoreClickActionType::UNKNOWN;
 	}
 
     UPROPERTY(BlueprintReadOnly)
@@ -42,4 +44,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	FString clickAction;
+
+	UPROPERTY(BlueprintReadOnly)
+	EURuStoreClickActionType clickActionType;
 };
