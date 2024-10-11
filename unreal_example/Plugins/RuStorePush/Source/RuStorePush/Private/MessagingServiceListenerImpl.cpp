@@ -3,6 +3,7 @@
 #include "MessagingServiceListenerImpl.h"
 #include "AndroidJavaClass.h"
 #include "CallbackHandler.h"
+#include "EURuStoreClickActionType.h"
 
 using namespace RuStoreSDK;
 
@@ -71,6 +72,15 @@ void MessagingServiceListenerImpl::OnMessageReceived(AndroidJavaObject* response
             response->notification.imageUrl = jImageUrl->CallFString("toString");
 
             delete jImageUrl;
+        }
+
+        auto jclickActionType = jNotification->GetAJObject("clickActionType", "Lcom/vk/push/common/messaging/ClickActionType;");
+        if (jclickActionType != nullptr)
+        {
+            int ordinal = jclickActionType->CallInt("ordinal");
+            response->notification.clickActionType = static_cast<EURuStoreClickActionType>(ordinal);
+
+            delete jclickActionType;
         }
 
         delete jNotification;
