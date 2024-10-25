@@ -1,5 +1,9 @@
 ## История изменений
 
+### Release 6.2.1
+- Версия SDK push 6.2.1.
+- Добавлено поле `clickActionType` в структуру `FURuStoreNotification`.
+
 ### Release 6.1.0
 - Версия SDK push 6.1.0.
 
