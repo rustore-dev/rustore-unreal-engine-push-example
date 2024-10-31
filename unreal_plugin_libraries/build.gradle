@@ -1,8 +1,8 @@
 ext {
-    rustore_core_version = '1.0.0'
-    rustore_pushclient_version = '6.1.0'
+    rustore_core_version = '6.1.0'
+    rustore_pushclient_version = '6.2.1'
     rustore_sdk_type = ''
-    sdk_version_code = 610
+    sdk_version_code = 621
     rustore_qa_dir = "${rootProject.projectDir}/../../QA"
 }
 buildscript {
