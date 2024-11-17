@@ -1,9 +1,8 @@
 ext {
+    rustore_pushclient_version = '6.3.0'
     rustore_core_version = '6.1.0'
-    rustore_pushclient_version = '6.2.1'
     rustore_sdk_type = ''
-    sdk_version_code = 621
-    rustore_qa_dir = "${rootProject.projectDir}/../../QA"
+    sdk_version_code = 630
 }
 buildscript {
     ext.kotlin_version = "1.9.0"
@@ -26,9 +25,6 @@ allprojects {
         mavenCentral()
         maven {
             url = uri("https://artifactory-external.vkpartner.ru/artifactory/maven")
-        }
-        maven {
-            url uri("$rustore_qa_dir/repo")
         }
     }
 }

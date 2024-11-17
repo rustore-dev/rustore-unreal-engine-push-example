@@ -105,7 +105,7 @@ extern "C"
         castobj->OnLogInfo(JavaTypeConverter::Convert(env, message), obj);
     }
 
-    JNIEXPORT void JNICALL Java_ru_rustore_unreal_pushclient_wrappers_LogListenerWrapper_NativeLogWarning(JNIEnv* env, jobject, jlong pointer, jstring message, jthrowable throwable)
+    JNIEXPORT void JNICALL Java_ru_rustore_unreal_pushclient_wrappers_LogListenerWrapper_NativeLogWarn(JNIEnv* env, jobject, jlong pointer, jstring message, jthrowable throwable)
     {
         auto obj = new AndroidJavaObject(throwable);
         obj->UpdateToGlobalRef();

@@ -62,7 +62,7 @@
         </activity>
         <service
           xmlns:tools="http://schemas.android.com/tools"
-          android:name="ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService"
+          android:name="ru.rustore.unreal.pushclient.RuStoreUnrealMessagingService"
           android:exported="true"
           tools:ignore="ExportedService">
           <intent-filter>
@@ -85,7 +85,7 @@
       
       dependencies {
         // RuStore Push
-        implementation ("ru.rustore.sdk:pushclient:6.2.1$push_type")
+        implementation ("ru.rustore.sdk:pushclient:6.3.0$push_type")
         implementation fileTree(include: ["RuStoreUnityPushClient${push_type}.aar"], dir: 'src/main/libs')
       }
     </insert>
