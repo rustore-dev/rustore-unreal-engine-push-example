@@ -1,12 +1,10 @@
-package ru.rustore.unitysdk.pushclient
+package ru.rustore.unreal.pushclient
 
 import ru.rustore.sdk.pushclient.messaging.exception.RuStorePushClientException
 import ru.rustore.sdk.pushclient.messaging.model.RemoteMessage
 import ru.rustore.sdk.pushclient.messaging.service.RuStoreMessagingService
-import ru.rustore.unreal.pushclient.RuStoreUnrealPushClient
 
-@Deprecated("Use the RuStoreUnityMessagingService implementation from the ru.rustore.unrealsdk.pushclient package")
-class RuStoreUnityMessagingService : RuStoreMessagingService() {
+class RuStoreUnrealMessagingService : RuStoreMessagingService() {
 
     override fun onNewToken(token: String) {
         RuStoreUnrealPushClient.onNewToken(token)
