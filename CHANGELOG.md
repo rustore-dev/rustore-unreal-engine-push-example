@@ -1,5 +1,8 @@
 ## История изменений
 
+### Release 6.4.0
+- Версия SDK push 6.4.0.
+
 ### Release 6.3.0
 - Версия SDK push 6.3.0.
 - Класс `ru.rustore.unitysdk.pushclient.RuStoreUnityMessagingService` помечен как устаревший, вместо него используется класс `ru.rustore.unreal.pushclient.RuStoreUnrealMessagingService`.

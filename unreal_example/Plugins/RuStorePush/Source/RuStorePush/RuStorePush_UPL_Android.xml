@@ -85,7 +85,7 @@
       
       dependencies {
         // RuStore Push
-        implementation ("ru.rustore.sdk:pushclient:6.3.0$push_type")
+        implementation ("ru.rustore.sdk:pushclient:6.4.0$push_type")
         implementation fileTree(include: ["RuStoreUnityPushClient${push_type}.aar"], dir: 'src/main/libs')
       }
     </insert>
