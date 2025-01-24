@@ -11,7 +11,6 @@ import ru.rustore.unreal.pushclient.UnrealClientIdType;
 public class RuStorePushApplication extends GameApplication {
 
 	private final String PROJECT_ID ="-Yv4b5cM2yfXm0bZyY6Rk7AHX8SrHmLI";
-	//private final String PROJECT_ID ="6RUviJhYqgNXDXAIL5wqkAP1Rdnd4JmY";
 
 	@Override
 	public void onCreate() {

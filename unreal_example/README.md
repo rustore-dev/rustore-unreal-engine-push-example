@@ -72,6 +72,6 @@
 
 Дополнительная помощь и инструкции доступны на странице [help.rustore.ru](https://help.rustore.ru/) и по электронной почте [support@rustore.ru](mailto:support@rustore.ru).
 
-[10]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-5-1
-[20]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-5-1#get-push-check
-[30]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-5-1#get-push-token
+[10]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-6-1
+[20]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-6-1#get-push-check
+[30]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-6-1#get-push-token
