@@ -5,7 +5,7 @@
 #include "JavaActivity.h"
 #include "JavaApplication.h"
 
-const FString URuStoreCore::PluginVersion = "6.1.0";
+const FString URuStoreCore::PluginVersion = "8.0.0-alpha01";
 URuStoreCore* URuStoreCore::_instance = nullptr;
 bool URuStoreCore::_bIsInstanceInitialized = false;
 
