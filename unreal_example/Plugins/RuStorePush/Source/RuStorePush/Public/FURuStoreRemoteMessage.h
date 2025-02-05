@@ -16,7 +16,7 @@ struct RUSTOREPUSH_API FURuStoreRemoteMessage
 
 public:
 	/*!
-	@brief  онструктор.
+	@brief Конструктор.
 	*/
 	FURuStoreRemoteMessage()
 	{
