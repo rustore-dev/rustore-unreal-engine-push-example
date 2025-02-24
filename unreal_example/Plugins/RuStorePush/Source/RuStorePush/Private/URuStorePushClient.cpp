@@ -12,7 +12,7 @@
 
 using namespace RuStoreSDK;
 
-const FString URuStorePushClient::PluginVersion = "6.7.0";
+const FString URuStorePushClient::PluginVersion = "6.8.0";
 URuStorePushClient* URuStorePushClient::_instance = nullptr;
 bool URuStorePushClient::_bIsInstanceInitialized = false;
 
