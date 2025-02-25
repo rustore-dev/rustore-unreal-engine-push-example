@@ -52,4 +52,4 @@
 
 Дополнительная помощь и инструкции доступны на странице [help.rustore.ru](https://help.rustore.ru/) и по электронной почте [support@rustore.ru](mailto:support@rustore.ru).
 
-[10]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-7-0
+[10]: https://www.rustore.ru/help/sdk/push-notifications/unreal/6-8-0
