@@ -1,4 +1,6 @@
 {
-	"sdk": "6.9.1",
-	"core": "8.0.0-alpha01"
+	"sdk": "6.10.0",
+	"sdk_version_code": 61000,
+	"core": "8.0.0-alpha01",
+	"core_version_code": 800
 }
