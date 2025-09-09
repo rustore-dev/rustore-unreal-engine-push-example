@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 61000,
-	"VersionName": "6.10.0",
+	"Version": 70000,
+	"VersionName": "7.0.0",
 	"FriendlyName": "RuStore Push",
 	"Description": "",
 	"Category": "Mobile",
